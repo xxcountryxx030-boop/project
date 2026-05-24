@@ -2,26 +2,60 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>BoxPixelWeb | Diseño y Píxeles</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoxPixelWeb | Home</title>
+    <style>
+        /* Estilos base */
+        body { margin: 0; font-family: 'Courier New', Courier, monospace; background: #0d0d0d; color: #fff; display: flex; }
+
+        /* Barra Lateral */
+        nav { width: 250px; height: 100vh; background: #1a1a1a; padding: 20px; border-right: 2px solid #333; }
+        .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; color: #00ffcc; }
+        nav ul { list-style: none; padding: 0; }
+        nav li { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; }
+        nav li:hover { color: #00ffcc; }
+
+        /* Contenido Principal */
+        main { flex: 1; padding: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+
+        /* Tarjetas de Proyectos */
+        .card { background: #161616; border: 2px solid #333; padding: 20px; transition: 0.3s; }
+        .card:hover { border-color: #00ffcc; transform: translateY(-5px); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+        .card h3 { margin-top: 0; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Bienvenido a BoxPixelWeb</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Proyectos</a></li>
-                <li><a href="#">Contacto</a></li>
-            </ul>
-        </nav>
-    </header>
-    
+
+    <nav>
+        <div class="logo">BOXPIXEL</div>
+        <ul>
+            <li>🏠 Inicio</li>
+            <li>🎮 Proyectos</li>
+            <li>🛠 Herramientas</li>
+            <li>📁 Descargas</li>
+        </ul>
+    </nav>
+
     <main>
-        <section>
-            <h2>Sobre nosotros</h2>
-            <p>Transformando ideas en píxeles perfectos.</p>
-        </section>
+        <h1>Panel de Control</h1>
+        <p>Bienvenido a tu centro de desarrollo creativo.</p>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Juego 1</h3>
+                <p>Descripción breve del proyecto de píxeles.</p>
+            </div>
+            <div class="card">
+                <h3>Juego 2</h3>
+                <p>Otro proyecto increíble en progreso.</p>
+            </div>
+            <div class="card">
+                <h3>Utilidad Pixel</h3>
+                <p>Una herramienta para diseñadores.</p>
+            </div>
+        </div>
     </main>
+
 </body>
 </html>
