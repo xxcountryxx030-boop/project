@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>BoxPixelWeb</title>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -18,6 +19,8 @@ import {
     signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* CONFIG FIREBASE */
 
 const firebaseConfig = {
 
@@ -36,27 +39,33 @@ const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider();
 
+/* LOGIN GOOGLE */
+
 window.loginGoogle = async function(){
 
     try{
 
         await signInWithPopup(auth, provider);
 
-    }catch(err){
+    }catch(error){
 
         alert("Error al iniciar sesión");
 
-        console.log(err);
+        console.log(error);
 
     }
 
 }
+
+/* LOGOUT */
 
 window.logoutGoogle = async function(){
 
     await signOut(auth);
 
 }
+
+/* ESTADO LOGIN */
 
 onAuthStateChanged(auth, (user)=>{
 
@@ -70,7 +79,7 @@ onAuthStateChanged(auth, (user)=>{
 
         userBox.innerHTML = `
             <img src="${user.photoURL}" class="avatar">
-            <span>${user.displayName}</span>
+            <h3>${user.displayName}</h3>
         `;
 
         loginBtn.style.display = "none";
@@ -79,7 +88,7 @@ onAuthStateChanged(auth, (user)=>{
     }else{
 
         userBox.innerHTML = `
-            <span>No conectado</span>
+            <h3>No conectado</h3>
         `;
 
         loginBtn.style.display = "block";
@@ -89,13 +98,29 @@ onAuthStateChanged(auth, (user)=>{
 
 });
 
+/* CAMBIAR PAGINAS */
+
+window.showPage = function(pageId){
+
+    const pages = document.querySelectorAll(".page");
+
+    pages.forEach(page=>{
+        page.classList.remove("active");
+    });
+
+    document.getElementById(pageId).classList.add("active");
+
+}
+
+/* CHAT */
+
 window.sendMessage = function(){
 
     const input = document.getElementById("msg");
 
     const messages = document.getElementById("messages");
 
-    if(input.value.trim() == "") return;
+    if(input.value.trim() === "") return;
 
     const div = document.createElement("div");
 
@@ -125,12 +150,12 @@ window.sendMessage = function(){
 }
 
 body{
-    display:flex;
     background:#0f172a;
     color:white;
+    display:flex;
 }
 
-/* MENU LATERAL */
+/* SIDEBAR */
 
 .sidebar{
     width:260px;
@@ -144,9 +169,9 @@ body{
 }
 
 .logo{
-    font-size:30px;
-    font-weight:bold;
+    font-size:32px;
     color:#38bdf8;
+    font-weight:bold;
     margin-bottom:40px;
 }
 
@@ -156,16 +181,19 @@ body{
     gap:15px;
 }
 
-.menu a{
-    text-decoration:none;
-    color:white;
+.menu button{
     background:#1e293b;
+    border:none;
+    color:white;
     padding:15px;
     border-radius:12px;
+    text-align:left;
+    cursor:pointer;
     transition:0.3s;
+    font-size:16px;
 }
 
-.menu a:hover{
+.menu button:hover{
     background:#38bdf8;
     transform:translateX(5px);
 }
@@ -175,14 +203,14 @@ body{
 .user{
     margin-top:40px;
     background:#1e293b;
-    padding:15px;
-    border-radius:12px;
+    border-radius:15px;
+    padding:20px;
     text-align:center;
 }
 
 .avatar{
-    width:70px;
-    height:70px;
+    width:80px;
+    height:80px;
     border-radius:50%;
     margin-bottom:10px;
 }
@@ -196,14 +224,13 @@ body{
     background:#38bdf8;
     color:white;
     cursor:pointer;
-    font-size:16px;
 }
 
 .google-btn:hover{
     background:#0ea5e9;
 }
 
-/* CONTENIDO */
+/* CONTENT */
 
 .content{
     margin-left:260px;
@@ -211,7 +238,17 @@ body{
     padding:40px;
 }
 
-/* HERO */
+/* PAGINAS */
+
+.page{
+    display:none;
+}
+
+.active{
+    display:block;
+}
+
+/* HOME */
 
 .hero{
     background:#1e293b;
@@ -234,7 +271,7 @@ body{
 /* CARDS */
 
 .cards{
-    margin-top:40px;
+    margin-top:30px;
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
     gap:20px;
@@ -252,33 +289,28 @@ body{
     background:#334155;
 }
 
-/* COMUNIDAD */
+/* CHAT */
 
 .community{
-    margin-top:50px;
     background:#1e293b;
     padding:30px;
     border-radius:20px;
 }
 
-.community h2{
-    margin-bottom:20px;
-    color:#38bdf8;
-}
-
 .messages{
+    background:#0f172a;
     height:300px;
     overflow-y:auto;
-    background:#0f172a;
     border-radius:12px;
     padding:15px;
+    margin-top:20px;
 }
 
 .message{
     background:#334155;
-    margin-bottom:10px;
     padding:12px;
     border-radius:10px;
+    margin-bottom:10px;
 }
 
 .chat-send{
@@ -290,9 +322,9 @@ body{
     flex:1;
     padding:15px;
     border:none;
-    border-radius:10px 0 0 10px;
     background:#0f172a;
     color:white;
+    border-radius:10px 0 0 10px;
 }
 
 .chat-send button{
@@ -304,17 +336,22 @@ body{
     cursor:pointer;
 }
 
-.chat-send button:hover{
-    background:#0ea5e9;
+/* PROYECTOS */
+
+.project{
+    background:#1e293b;
+    padding:20px;
+    border-radius:15px;
+    margin-top:20px;
 }
 
-footer{
-    margin-top:50px;
-    text-align:center;
-    color:#94a3b8;
-}
+/* RESPONSIVE */
 
 @media(max-width:900px){
+
+    body{
+        flex-direction:column;
+    }
 
     .sidebar{
         width:100%;
@@ -322,13 +359,9 @@ footer{
         position:relative;
     }
 
-    body{
-        flex-direction:column;
-    }
-
     .content{
-        width:100%;
         margin-left:0;
+        width:100%;
     }
 
 }
@@ -338,7 +371,7 @@ footer{
 
 <body>
 
-<!-- MENU -->
+<!-- SIDEBAR -->
 
 <div class="sidebar">
 
@@ -348,24 +381,38 @@ footer{
 
     <div class="menu">
 
-        <a href="#">🏠 Inicio</a>
+        <button onclick="showPage('home')">
+            🏠 Inicio
+        </button>
 
-        <a href="#">🎮 Juegos</a>
+        <button onclick="showPage('games')">
+            🎮 Juegos
+        </button>
 
-        <a href="#">💻 Programación</a>
+        <button onclick="showPage('programming')">
+            💻 Programación
+        </button>
 
-        <a href="#">📂 Proyectos</a>
+        <button onclick="showPage('projects')">
+            📂 Proyectos
+        </button>
 
-        <a href="#">🌎 Comunidad</a>
+        <button onclick="showPage('community')">
+            🌎 Comunidad
+        </button>
 
-        <a href="#">⚙️ Configuración</a>
+        <button onclick="showPage('settings')">
+            ⚙️ Configuración
+        </button>
 
     </div>
+
+    <!-- USER -->
 
     <div class="user">
 
         <div id="userBox">
-            <span>No conectado</span>
+            <h3>No conectado</h3>
         </div>
 
         <button class="google-btn" id="loginBtn" onclick="loginGoogle()">
@@ -380,42 +427,112 @@ footer{
 
 </div>
 
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 
 <div class="content">
 
-    <div class="hero">
+    <!-- HOME -->
 
-        <h1>BoxPixelWeb</h1>
+    <div class="page active" id="home">
 
-        <p>
-            Comunidad gamer y programación 🚀
-        </p>
+        <div class="hero">
+
+            <h1>BoxPixelWeb</h1>
+
+            <p>
+                Comunidad gamer y programación 🚀
+            </p>
+
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h2>🎮 Juegos</h2>
+                <p>
+                    Explora juegos creados por usuarios.
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>💻 Programación</h2>
+                <p>
+                    Aprende HTML, CSS, JS y Python.
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>🌎 Comunidad</h2>
+                <p>
+                    Habla con otros usuarios.
+                </p>
+            </div>
+
+        </div>
 
     </div>
 
-    <!-- CARDS -->
+    <!-- JUEGOS -->
 
-    <div class="cards">
+    <div class="page" id="games">
 
-        <div class="card">
-            <h2>🎮 Juegos</h2>
+        <h1>🎮 Juegos</h1>
+
+        <div class="project">
+            <h2>Minecraft 2D</h2>
             <p>
-                Publica y comparte tus juegos.
+                Juego creado con JavaScript.
             </p>
         </div>
 
-        <div class="card">
-            <h2>💻 Programación</h2>
+        <div class="project">
+            <h2>PacMan Clone</h2>
             <p>
-                HTML, CSS, JavaScript, Python y más.
+                Juego arcade online.
             </p>
         </div>
 
-        <div class="card">
-            <h2>🌎 Comunidad</h2>
+    </div>
+
+    <!-- PROGRAMACION -->
+
+    <div class="page" id="programming">
+
+        <h1>💻 Programación</h1>
+
+        <div class="project">
+            <h2>Curso HTML</h2>
             <p>
-                Habla con otros usuarios.
+                Aprende a crear páginas web.
+            </p>
+        </div>
+
+        <div class="project">
+            <h2>Curso JavaScript</h2>
+            <p>
+                Aprende lógica y programación web.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- PROYECTOS -->
+
+    <div class="page" id="projects">
+
+        <h1>📂 Proyectos</h1>
+
+        <div class="project">
+            <h2>BoxLauncher</h2>
+            <p>
+                Launcher gamer para Windows.
+            </p>
+        </div>
+
+        <div class="project">
+            <h2>PixelChat</h2>
+            <p>
+                Chat en tiempo real para comunidades.
             </p>
         </div>
 
@@ -423,33 +540,47 @@ footer{
 
     <!-- COMUNIDAD -->
 
-    <div class="community">
+    <div class="page" id="community">
 
-        <h2>🌎 Comunidad</h2>
+        <div class="community">
 
-        <div class="messages" id="messages">
+            <h1>🌎 Comunidad</h1>
 
-            <div class="message">
-                👋 Bienvenido a BoxPixelWeb
+            <div class="messages" id="messages">
+
+                <div class="message">
+                    👋 Bienvenido a BoxPixelWeb
+                </div>
+
             </div>
 
-        </div>
+            <div class="chat-send">
 
-        <div class="chat-send">
+                <input type="text" id="msg" placeholder="Escribe un mensaje...">
 
-            <input type="text" id="msg" placeholder="Escribe un mensaje...">
+                <button onclick="sendMessage()">
+                    Enviar
+                </button>
 
-            <button onclick="sendMessage()">
-                Enviar
-            </button>
+            </div>
 
         </div>
 
     </div>
 
-    <footer>
-        © 2026 BoxPixelWeb
-    </footer>
+    <!-- SETTINGS -->
+
+    <div class="page" id="settings">
+
+        <h1>⚙️ Configuración</h1>
+
+        <div class="project">
+            <p>
+                Próximamente más configuraciones.
+            </p>
+        </div>
+
+    </div>
 
 </div>
 
