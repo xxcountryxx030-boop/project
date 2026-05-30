@@ -1,207 +1,42 @@
-accessKey
-: 
-""
-align
-: 
-""
-attributeStyleMap
-: 
-StylePropertyMap {size: 0}
-attributes
-: 
-NamedNodeMap {0: class, 1: id, class: class, id: id, length: 2}
-autocapitalize
-: 
-""
-autofocus
-: 
-false
-baseURI
-: 
-"https://project-r42vw.vercel.app/"
-childElementCount
-: 
-3
-childNodes
-: 
-NodeList(7) [text, span.tagline.animate-entry, text, h1.hero-title.animate-entry, text, p.hero-desc.animate-entry, text]
-children
-: 
-HTMLCollection(3) [span.tagline.animate-entry, h1.hero-title.animate-entry, p.hero-desc.animate-entry]
-classList
-: 
-DOMTokenList ['hero-section', value: 'hero-section']
-className
-: 
-"hero-section"
-clientHeight
-: 
-304
-clientLeft
-: 
-0
-clientTop
-: 
-0
-clientWidth
-: 
-714
-contentEditable
-: 
-"inherit"
-currentCSSZoom
-: 
-1
-customElementRegistry
-: 
-CustomElementRegistry {}
-dataset
-: 
-DOMStringMap {}
-dir
-: 
-""
-draggable
-: 
-false
-elementTiming
-: 
-""
-enterKeyHint
-: 
-""
-firstChild
-: 
-text
-firstElementChild
-: 
-span.tagline.animate-entry
-hidden
-: 
-false
-id
-: 
-"view-home"
-inert
-: 
-false
-innerHTML
-: 
-"\n            <span class=\"tagline animate-entry\">Discovery &amp; Innovation</span>\n            <h1 class=\"hero-title animate-entry\">Hydra Web</h1>\n            <p class=\"hero-desc animate-entry\">\n                A page to find useful things promoted as pages, projects, and launchers. Currently featuring\n                <strong id=\"project-count\" style=\"color: var(--accent-color); transition: all 0.3s ease;\">--</strong>\n                community projects.\n            </p>\n        "
-innerText
-: 
-"DISCOVERY & INNOVATION\nHydra Web\n\nA page to find useful things promoted as pages, projects, and launchers. Currently featuring -- community projects."
-inputMode
-: 
-""
-isConnected
-: 
-true
-isContentEditable
-: 
-false
-lang
-: 
-""
-lastChild
-: 
-text
-lastElementChild
-: 
-p.hero-desc.animate-entry
-localName
-: 
-"div"
-namespaceURI
-: 
-"http://www.w3.org/1999/xhtml"
-nextSibling
-: 
-text
-nodeName
-: 
-"DIV"
-nodeType
-: 
-1
-nonce
-: 
-""
-offsetHeight
-: 
-304
-offsetLeft
-: 
-47
-offsetParent
-: 
-body
-offsetTop
-: 
-172
-offsetWidth
-: 
-714
-outerHTML
-: 
-"<div class=\"hero-section\" id=\"view-home\">\n            <span class=\"tagline animate-entry\">Discovery &amp; Innovation</span>\n            <h1 class=\"hero-title animate-entry\">Hydra Web</h1>\n            <p class=\"hero-desc animate-entry\">\n                A page to find useful things promoted as pages, projects, and launchers. Currently featuring\n                <strong id=\"project-count\" style=\"color: var(--accent-color); transition: all 0.3s ease;\">--</strong>\n                community projects.\n            </p>\n        </div>"
-outerText
-: 
-"DISCOVERY & INNOVATION\nHydra Web\n\nA page to find useful things promoted as pages, projects, and launchers. Currently featuring -- community projects."
-ownerDocument
-: 
-document
-parentElement
-: 
-main#main-content
-parentNode
-: 
-main#main-content
-part
-: 
-DOMTokenList [value: '']
-previousSibling
-: 
-text
-scrollHeight
-: 
-304
-scrollLeft
-: 
-0
-scrollTop
-: 
-0
-scrollWidth
-: 
-714
-slot
-: 
-""
-spellcheck
-: 
-true
-style
-: 
-CSSStyleDeclaration {accentColor: '', additiveSymbols: '', alignContent: '', alignItems: '', alignSelf: '', …}
-tabIndex
-: 
--1
-tagName
-: 
-"DIV"
-textContent
-: 
-"\n            Discovery & Innovation\n            Hydra Web\n            \n                A page to find useful things promoted as pages, projects, and launchers. Currently featuring\n                --\n                community projects.\n            \n        "
-title
-: 
-""
-translate
-: 
-true
-virtualKeyboardPolicy
-: 
-""
-writingSuggestions
-: 
-"true"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Hydra Web | Discovery & Innovation</title>
+
+    <link rel="icon" type="image/webp" href="/img/hydra-icon.webp">
+    <link rel="apple-touch-icon" href="/img/hydra-icon.webp">
+
+    <meta property="og:title" content="Hydra Web">
+    <meta property="og:description" content="Discover projects, launchers and utilities from Hydra Software.">
+    <meta property="og:image" content="/img/hydra-icon.webp">
+    <meta property="og:type" content="website">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div id="app-shell"></div>
+
+    <main id="main-content">
+        <div class="hero-section" id="view-home">
+            <span class="tagline animate-entry">Discovery & Innovation</span>
+            <h1 class="hero-title animate-entry">Hydra Web</h1>
+            <p class="hero-desc animate-entry">
+                A page to find useful things promoted as pages, projects, and launchers. Currently featuring
+                <strong id="project-count" style="color: var(--accent-color); transition: all 0.3s ease;">--</strong>
+                community projects.
+            </p>
+        </div>
+    </main>
+
+    <script type="module" src="/js/notify.js"></script>
+    <script type="module" src="/js/shell.js"></script>
+    <script type="module" src="/script.js"></script>
+</body>
+
+</html>
