@@ -1,34 +1,272 @@
-
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Hydra Web | Discovery & Innovation</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RedAI-Web</title>
 
-    <link rel="icon" type="image/png" href="/hydra-icon.png">
-    <link rel="apple-touch-icon" href="/hydra-icon.png">
-    <!-- ... resto de metatags ... -->
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+body{
+    background:#050816;
+    color:white;
+    overflow-x:hidden;
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" crossorigin src="/assets/index-BcaXkOY6.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-B25q8KUJ.css">
+.hero{
+    min-height:100vh;
+    background:
+    radial-gradient(circle at top, rgba(128,0,255,.35), transparent 50%),
+    #050816;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 30px;
+    background:rgba(0,0,0,.2);
+    backdrop-filter:blur(10px);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:24px;
+    font-weight:bold;
+    color:#b366ff;
+}
+
+nav{
+    display:flex;
+    gap:20px;
+}
+
+nav a{
+    color:#ccc;
+    text-decoration:none;
+}
+
+.btn{
+    background:#8b5cf6;
+    border:none;
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.content{
+    text-align:center;
+    margin-top:140px;
+}
+
+.content h1{
+    font-size:64px;
+    margin-bottom:20px;
+}
+
+.content p{
+    color:#bbb;
+    max-width:700px;
+    margin:auto;
+    line-height:1.7;
+}
+
+.buttons{
+    margin-top:30px;
+}
+
+.buttons button{
+    margin:10px;
+    padding:15px 30px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.primary{
+    background:#ff3d87;
+    color:white;
+}
+
+.secondary{
+    background:#1e1e2e;
+    color:white;
+    border:1px solid #444;
+}
+
+.stats{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    display:flex;
+    justify-content:space-around;
+    background:#080d1c;
+    padding:15px;
+    border-top:1px solid #222;
+}
+
+.stat{
+    text-align:center;
+}
+
+.stat b{
+    display:block;
+    font-size:20px;
+}
+
+.menu-btn{
+    position:fixed;
+    left:20px;
+    top:80px;
+    width:50px;
+    height:50px;
+    border:none;
+    border-radius:12px;
+    background:#8b5cf6;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    z-index:1000;
+}
+
+.sidebar{
+    position:fixed;
+    left:-320px;
+    top:0;
+    width:300px;
+    height:100%;
+    background:#0d1225;
+    transition:.3s;
+    padding:20px;
+    overflow-y:auto;
+}
+
+.sidebar.active{
+    left:0;
+}
+
+.sidebar h2{
+    margin-bottom:20px;
+}
+
+.card{
+    background:#171d35;
+    border:1px solid #7c3aed;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.card:hover{
+    background:#222a47;
+}
+
+.particle{
+    position:absolute;
+    border-radius:50%;
+    background:rgba(255,255,255,.3);
+    animation:float 8s infinite ease-in-out;
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0px);}
+    50%{transform:translateY(-30px);}
+}
+</style>
 </head>
-
 <body>
-    <!-- Imágenes pre-cargadas en el DOM pero ocultas/visibles donde se necesiten -->
-    <div style="display: none;">
-        <img id="hydra-icon-img" src="/hydra-icon.png" alt="Hydra Icon">
-        <img id="hydra-ia-img" src="/hydra_ia.png" alt="Hydra IA">
+
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+<div class="sidebar" id="sidebar">
+    <h2>🤖 RedAI-Web</h2>
+
+    <div class="card">🏆 View Rankings</div>
+    <div class="card">⭐ Hall Of Fame</div>
+
+    <h3 style="margin:20px 0;">Official Apps</h3>
+
+    <div class="card">⬇ Downloads & Clients</div>
+
+    <h3 style="margin:20px 0;">Legal</h3>
+
+    <div class="card">📄 Terms & Conditions</div>
+
+    <h3 style="margin:20px 0;">Development</h3>
+
+    <div class="card">📢 Announcements</div>
+    <div class="card">📝 Changelog</div>
+</div>
+
+<section class="hero">
+
+<header>
+    <div class="logo">🤖 RedAI-Web</div>
+
+    <nav>
+        <a href="#">Characters</a>
+        <a href="#">Forum</a>
+        <a href="#">Marketplace</a>
+        <a href="#">Create</a>
+    </nav>
+
+    <button class="btn">Sign In</button>
+</header>
+
+<div class="content">
+    <h1>AI characters that feel alive</h1>
+
+    <p>
+        Create, roleplay and chat with memorable personalities.
+        Build stories, communities and AI-powered experiences.
+    </p>
+
+    <div class="buttons">
+        <button class="primary">Explore Live Characters</button>
+        <button class="secondary">Create My First Character</button>
     </div>
+</div>
 
-    <div id="app-root"></div>
+<div class="stats">
+    <div class="stat"><b>27</b>Users</div>
+    <div class="stat"><b>8</b>Characters</div>
+    <div class="stat"><b>46</b>Chats</div>
+    <div class="stat"><b>0</b>Messages</div>
+</div>
 
+</section>
 
+<script>
+function toggleMenu(){
+    document.getElementById("sidebar")
+    .classList.toggle("active");
+}
+
+for(let i=0;i<12;i++){
+    let p=document.createElement("div");
+    p.classList.add("particle");
+
+    let size=Math.random()*40+20;
+
+    p.style.width=size+"px";
+    p.style.height=size+"px";
+    p.style.left=Math.random()*100+"%";
+    p.style.top=Math.random()*100+"%";
+
+    document.body.appendChild(p);
+}
+</script>
 
 </body>
-
 </html>
