@@ -3,185 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RedAI-Web</title>
+<title>PixelAi-Web</title>
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-    background:#050816;
-    color:white;
-    overflow-x:hidden;
+background:#050816;
+color:white;
+overflow-x:hidden;
 }
 
-.hero{
-    min-height:100vh;
-    background:
-    radial-gradient(circle at top, rgba(128,0,255,.35), transparent 50%),
-    #050816;
+html{
+scroll-behavior:smooth;
 }
 
-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px 30px;
-    background:rgba(0,0,0,.2);
-    backdrop-filter:blur(10px);
+.navbar{
+position:fixed;
+top:0;
+width:100%;
+height:60px;
+background:#0a1020;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+z-index:1000;
+border-bottom:1px solid rgba(255,255,255,.1);
 }
 
 .logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:24px;
-    font-weight:bold;
-    color:#b366ff;
+font-size:24px;
+font-weight:bold;
+color:#a855f7;
 }
 
-nav{
-    display:flex;
-    gap:20px;
+.nav-links{
+display:flex;
+gap:20px;
 }
 
-nav a{
-    color:#ccc;
-    text-decoration:none;
+.nav-links a{
+color:white;
+text-decoration:none;
 }
 
-.btn{
-    background:#8b5cf6;
-    border:none;
-    color:white;
-    padding:10px 18px;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.content{
-    text-align:center;
-    margin-top:140px;
-}
-
-.content h1{
-    font-size:64px;
-    margin-bottom:20px;
-}
-
-.content p{
-    color:#bbb;
-    max-width:700px;
-    margin:auto;
-    line-height:1.7;
-}
-
-.buttons{
-    margin-top:30px;
-}
-
-.buttons button{
-    margin:10px;
-    padding:15px 30px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.primary{
-    background:#ff3d87;
-    color:white;
-}
-
-.secondary{
-    background:#1e1e2e;
-    color:white;
-    border:1px solid #444;
-}
-
-.stats{
-    position:fixed;
-    bottom:0;
-    width:100%;
-    display:flex;
-    justify-content:space-around;
-    background:#080d1c;
-    padding:15px;
-    border-top:1px solid #222;
-}
-
-.stat{
-    text-align:center;
-}
-
-.stat b{
-    display:block;
-    font-size:20px;
+.signin{
+background:#7c3aed;
+border:none;
+padding:10px 18px;
+border-radius:10px;
+color:white;
+cursor:pointer;
 }
 
 .menu-btn{
-    position:fixed;
-    left:20px;
-    top:80px;
-    width:50px;
-    height:50px;
-    border:none;
-    border-radius:12px;
-    background:#8b5cf6;
-    color:white;
-    font-size:22px;
-    cursor:pointer;
-    z-index:1000;
+position:fixed;
+left:20px;
+top:80px;
+width:55px;
+height:55px;
+border:none;
+border-radius:15px;
+background:#7c3aed;
+color:white;
+font-size:24px;
+cursor:pointer;
+z-index:1001;
 }
 
 .sidebar{
-    position:fixed;
-    left:-320px;
-    top:0;
-    width:300px;
-    height:100%;
-    background:#0d1225;
-    transition:.3s;
-    padding:20px;
-    overflow-y:auto;
+position:fixed;
+left:-320px;
+top:0;
+width:300px;
+height:100vh;
+background:#0d1225;
+padding:20px;
+overflow-y:auto;
+transition:.3s;
+z-index:1000;
 }
 
 .sidebar.active{
-    left:0;
+left:0;
 }
 
 .sidebar h2{
-    margin-bottom:20px;
+margin-top:70px;
+margin-bottom:20px;
 }
 
 .card{
-    background:#171d35;
-    border:1px solid #7c3aed;
-    padding:15px;
-    margin-bottom:15px;
-    border-radius:12px;
-    cursor:pointer;
+background:#171d35;
+padding:15px;
+border-radius:12px;
+margin-bottom:12px;
+cursor:pointer;
+border:1px solid #7c3aed;
 }
 
 .card:hover{
-    background:#222a47;
+background:#232b4a;
+}
+
+.hero{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:100px 20px;
+background:
+radial-gradient(circle at top,
+rgba(168,85,247,.4),
+transparent 50%),
+#050816;
+}
+
+.hero h1{
+font-size:70px;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:20px;
+max-width:700px;
+margin:auto;
+color:#cfcfcf;
+}
+
+.hero-buttons{
+margin-top:30px;
+}
+
+.hero-buttons button{
+padding:15px 25px;
+margin:10px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+}
+
+.primary{
+background:#ff4f98;
+color:white;
+}
+
+.secondary{
+background:#1d2238;
+color:white;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:50px;
+}
+
+.stat{
+background:#101827;
+padding:20px;
+border-radius:15px;
+min-width:150px;
+}
+
+.section{
+min-height:100vh;
+padding:120px 40px;
+}
+
+.section h2{
+font-size:45px;
+margin-bottom:20px;
+color:#a855f7;
 }
 
 .particle{
-    position:absolute;
-    border-radius:50%;
-    background:rgba(255,255,255,.3);
-    animation:float 8s infinite ease-in-out;
+position:absolute;
+border-radius:50%;
+background:rgba(255,255,255,.15);
+animation:float 8s infinite ease-in-out;
 }
 
 @keyframes float{
-    0%,100%{transform:translateY(0px);}
-    50%{transform:translateY(-30px);}
+50%{transform:translateY(-25px);}
+}
+
+@media(max-width:768px){
+.hero h1{
+font-size:40px;
+}
+.nav-links{
+display:none;
+}
 }
 </style>
 </head>
@@ -190,81 +212,149 @@ nav a{
 <button class="menu-btn" onclick="toggleMenu()">☰</button>
 
 <div class="sidebar" id="sidebar">
-    <h2>🤖 RedAI-Web</h2>
 
-    <div class="card">🏆 View Rankings</div>
-    <div class="card">⭐ Hall Of Fame</div>
+<h2>🟪 PixelAi-Web</h2>
 
-    <h3 style="margin:20px 0;">Official Apps</h3>
+<div class="card" onclick="goTo('inicio')">🏠 Inicio</div>
+<div class="card" onclick="goTo('rankings')">🏆 Rankings</div>
+<div class="card" onclick="goTo('hall')">⭐ Hall Of Fame</div>
+<div class="card" onclick="goTo('downloads')">⬇ Downloads</div>
+<div class="card" onclick="goTo('community')">👥 Community</div>
+<div class="card" onclick="goTo('characters')">🤖 Characters</div>
+<div class="card" onclick="goTo('forum')">💬 Forum</div>
+<div class="card" onclick="goTo('market')">🛒 Marketplace</div>
+<div class="card" onclick="goTo('changelog')">📝 Changelog</div>
+<div class="card" onclick="goTo('terms')">📄 Terms</div>
 
-    <div class="card">⬇ Downloads & Clients</div>
-
-    <h3 style="margin:20px 0;">Legal</h3>
-
-    <div class="card">📄 Terms & Conditions</div>
-
-    <h3 style="margin:20px 0;">Development</h3>
-
-    <div class="card">📢 Announcements</div>
-    <div class="card">📝 Changelog</div>
 </div>
 
-<section class="hero">
+<nav class="navbar">
 
-<header>
-    <div class="logo">🤖 RedAI-Web</div>
+<div class="logo">🟪 PixelAi-Web</div>
 
-    <nav>
-        <a href="#">Characters</a>
-        <a href="#">Forum</a>
-        <a href="#">Marketplace</a>
-        <a href="#">Create</a>
-    </nav>
+<div class="nav-links">
+<a href="#characters">Characters</a>
+<a href="#forum">Forum</a>
+<a href="#market">Marketplace</a>
+<a href="#community">Community</a>
+</div>
 
-    <button class="btn">Sign In</button>
-</header>
+<button class="signin">Sign In</button>
 
-<div class="content">
-    <h1>AI characters that feel alive</h1>
+</nav>
 
-    <p>
-        Create, roleplay and chat with memorable personalities.
-        Build stories, communities and AI-powered experiences.
-    </p>
+<section class="hero" id="inicio">
 
-    <div class="buttons">
-        <button class="primary">Explore Live Characters</button>
-        <button class="secondary">Create My First Character</button>
-    </div>
+<div>
+
+<h1>Welcome to PixelAi-Web</h1>
+
+<p>
+Create, chat and build amazing AI experiences with the PixelAi-Web community.
+</p>
+
+<div class="hero-buttons">
+<button class="primary">Explore Characters</button>
+<button class="secondary">Create Character</button>
 </div>
 
 <div class="stats">
-    <div class="stat"><b>27</b>Users</div>
-    <div class="stat"><b>8</b>Characters</div>
-    <div class="stat"><b>46</b>Chats</div>
-    <div class="stat"><b>0</b>Messages</div>
+
+<div class="stat">
+<h2>27</h2>
+Users
+</div>
+
+<div class="stat">
+<h2>8</h2>
+Characters
+</div>
+
+<div class="stat">
+<h2>46</h2>
+Chats
+</div>
+
+<div class="stat">
+<h2>0</h2>
+Messages
+</div>
+
+</div>
+
 </div>
 
 </section>
 
+<section class="section" id="rankings">
+<h2>🏆 Rankings</h2>
+<p>Top usuarios de PixelAi-Web.</p>
+</section>
+
+<section class="section" id="hall">
+<h2>⭐ Hall Of Fame</h2>
+<p>Miembros destacados.</p>
+</section>
+
+<section class="section" id="downloads">
+<h2>⬇ Downloads</h2>
+<p>Descargas oficiales.</p>
+</section>
+
+<section class="section" id="community">
+<h2>👥 Community</h2>
+<p>Comunidad de PixelAi-Web.</p>
+</section>
+
+<section class="section" id="characters">
+<h2>🤖 Characters</h2>
+<p>Personajes de IA.</p>
+</section>
+
+<section class="section" id="forum">
+<h2>💬 Forum</h2>
+<p>Foro de discusión.</p>
+</section>
+
+<section class="section" id="market">
+<h2>🛒 Marketplace</h2>
+<p>Marketplace oficial.</p>
+</section>
+
+<section class="section" id="changelog">
+<h2>📝 Changelog</h2>
+<p>Actualizaciones del sitio.</p>
+</section>
+
+<section class="section" id="terms">
+<h2>📄 Terms & Conditions</h2>
+<p>Términos del servicio.</p>
+</section>
+
 <script>
 function toggleMenu(){
-    document.getElementById("sidebar")
-    .classList.toggle("active");
+document.getElementById("sidebar").classList.toggle("active");
 }
 
-for(let i=0;i<12;i++){
-    let p=document.createElement("div");
-    p.classList.add("particle");
+function goTo(id){
+document.getElementById(id).scrollIntoView({
+behavior:"smooth"
+});
+document.getElementById("sidebar").classList.remove("active");
+}
 
-    let size=Math.random()*40+20;
+for(let i=0;i<25;i++){
+let p=document.createElement("div");
+p.className="particle";
 
-    p.style.width=size+"px";
-    p.style.height=size+"px";
-    p.style.left=Math.random()*100+"%";
-    p.style.top=Math.random()*100+"%";
+let s=Math.random()*25+10;
 
-    document.body.appendChild(p);
+p.style.width=s+"px";
+p.style.height=s+"px";
+p.style.left=Math.random()*100+"%";
+p.style.top=Math.random()*100+"%";
+
+document.body.appendChild(p);
 }
 </script>
 
