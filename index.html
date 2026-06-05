@@ -3,358 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PixelAi-Web</title>
+<title>MiniToToLoco-Web</title>
 
 <style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:Arial, sans-serif;
 }
 
 body{
-background:#050816;
-color:white;
-overflow-x:hidden;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-.navbar{
-position:fixed;
-top:0;
-width:100%;
-height:60px;
-background:#0a1020;
 display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 20px;
-z-index:1000;
-border-bottom:1px solid rgba(255,255,255,.1);
-}
-
-.logo{
-font-size:24px;
-font-weight:bold;
-color:#a855f7;
-}
-
-.nav-links{
-display:flex;
-gap:20px;
-}
-
-.nav-links a{
+height:100vh;
+background:#181818;
 color:white;
-text-decoration:none;
-}
-
-.signin{
-background:#7c3aed;
-border:none;
-padding:10px 18px;
-border-radius:10px;
-color:white;
-cursor:pointer;
-}
-
-.menu-btn{
-position:fixed;
-left:20px;
-top:80px;
-width:55px;
-height:55px;
-border:none;
-border-radius:15px;
-background:#7c3aed;
-color:white;
-font-size:24px;
-cursor:pointer;
-z-index:1001;
 }
 
 .sidebar{
-position:fixed;
-left:-320px;
-top:0;
-width:300px;
-height:100vh;
-background:#0d1225;
+width:250px;
+background:#111;
 padding:20px;
 overflow-y:auto;
-transition:.3s;
-z-index:1000;
 }
 
-.sidebar.active{
-left:0;
-}
-
-.sidebar h2{
-margin-top:70px;
+.logo{
+font-size:25px;
+font-weight:bold;
 margin-bottom:20px;
+text-align:center;
+color:#00aaff;
+}
+
+.menu button{
+width:100%;
+padding:12px;
+margin:5px 0;
+border:none;
+background:#222;
+color:white;
+cursor:pointer;
+border-radius:8px;
+}
+
+.menu button:hover{
+background:#00aaff;
+}
+
+.main{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+.topbar{
+background:#222;
+padding:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.search{
+width:300px;
+padding:8px;
+border:none;
+border-radius:5px;
+}
+
+.content{
+flex:1;
+padding:20px;
+overflow-y:auto;
 }
 
 .card{
-background:#171d35;
+background:#222;
 padding:15px;
-border-radius:12px;
-margin-bottom:12px;
-cursor:pointer;
-border:1px solid #7c3aed;
+border-radius:10px;
+margin-bottom:15px;
 }
 
-.card:hover{
-background:#232b4a;
-}
-
-.hero{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:100px 20px;
-background:
-radial-gradient(circle at top,
-rgba(168,85,247,.4),
-transparent 50%),
-#050816;
-}
-
-.hero h1{
-font-size:70px;
-margin-bottom:20px;
-}
-
-.hero p{
-font-size:20px;
-max-width:700px;
-margin:auto;
-color:#cfcfcf;
-}
-
-.hero-buttons{
-margin-top:30px;
-}
-
-.hero-buttons button{
-padding:15px 25px;
-margin:10px;
+textarea{
+width:100%;
+height:80px;
+padding:10px;
 border:none;
-border-radius:12px;
+border-radius:8px;
+resize:none;
+}
+
+.postBtn{
+margin-top:10px;
+padding:10px;
+background:#00aaff;
+color:white;
+border:none;
+border-radius:8px;
 cursor:pointer;
 }
 
-.primary{
-background:#ff4f98;
-color:white;
+.chat-box{
+height:250px;
+overflow-y:auto;
+background:#111;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px;
 }
 
-.secondary{
-background:#1d2238;
-color:white;
+.msg{
+background:#333;
+padding:8px;
+margin:5px 0;
+border-radius:8px;
 }
 
-.stats{
+.chat-input{
 display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:50px;
+gap:10px;
 }
 
-.stat{
-background:#101827;
-padding:20px;
-border-radius:15px;
-min-width:150px;
+.chat-input input{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
 }
 
-.section{
-min-height:100vh;
-padding:120px 40px;
+.chat-input button{
+padding:10px;
+background:#00aaff;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
 }
 
-.section h2{
-font-size:45px;
+.profile{
+text-align:center;
 margin-bottom:20px;
-color:#a855f7;
 }
 
-.particle{
-position:absolute;
+.avatar{
+width:80px;
+height:80px;
+background:#00aaff;
 border-radius:50%;
-background:rgba(255,255,255,.15);
-animation:float 8s infinite ease-in-out;
-}
-
-@keyframes float{
-50%{transform:translateY(-25px);}
-}
-
-@media(max-width:768px){
-.hero h1{
-font-size:40px;
-}
-.nav-links{
-display:none;
-}
+margin:auto;
+margin-bottom:10px;
 }
 </style>
 </head>
 <body>
 
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div class="sidebar">
+<div class="logo">MiniToToLoco-Web</div>
 
-<div class="sidebar" id="sidebar">
-
-<h2>🟪 PixelAi-Web</h2>
-
-<div class="card" onclick="goTo('inicio')">🏠 Inicio</div>
-<div class="card" onclick="goTo('rankings')">🏆 Rankings</div>
-<div class="card" onclick="goTo('hall')">⭐ Hall Of Fame</div>
-<div class="card" onclick="goTo('downloads')">⬇ Downloads</div>
-<div class="card" onclick="goTo('community')">👥 Community</div>
-<div class="card" onclick="goTo('characters')">🤖 Characters</div>
-<div class="card" onclick="goTo('forum')">💬 Forum</div>
-<div class="card" onclick="goTo('market')">🛒 Marketplace</div>
-<div class="card" onclick="goTo('changelog')">📝 Changelog</div>
-<div class="card" onclick="goTo('terms')">📄 Terms</div>
-
+<div class="profile">
+<div class="avatar"></div>
+<h3>Invitado</h3>
 </div>
 
-<nav class="navbar">
-
-<div class="logo">🟪 PixelAi-Web</div>
-
-<div class="nav-links">
-<a href="#characters">Characters</a>
-<a href="#forum">Forum</a>
-<a href="#market">Marketplace</a>
-<a href="#community">Community</a>
+<div class="menu">
+<button onclick="mostrar('inicio')">🏠 Inicio</button>
+<button onclick="mostrar('publicar')">📝 Publicar</button>
+<button onclick="mostrar('chat')">💬 Chat</button>
+<button onclick="mostrar('comunidad')">👥 Comunidad</button>
+<button onclick="mostrar('videos')">🎥 Videos</button>
+<button onclick="mostrar('musica')">🎵 Música</button>
+<button onclick="mostrar('juegos')">🎮 Juegos</button>
+<button onclick="mostrar('perfil')">👤 Perfil</button>
+</div>
 </div>
 
-<button class="signin">Sign In</button>
+<div class="main">
 
-</nav>
-
-<section class="hero" id="inicio">
-
-<div>
-
-<h1>Welcome to PixelAi-Web</h1>
-
-<p>
-Create, chat and build amazing AI experiences with the PixelAi-Web community.
-</p>
-
-<div class="hero-buttons">
-<button class="primary">Explore Characters</button>
-<button class="secondary">Create Character</button>
+<div class="topbar">
+<h2>MiniToToLoco-Web</h2>
+<input class="search" placeholder="Buscar...">
 </div>
 
-<div class="stats">
+<div class="content">
 
-<div class="stat">
-<h2>27</h2>
-Users
+<div id="inicio">
+<div class="card">
+<h2>Bienvenido</h2>
+<p>Red social creada para MiniToToLoco-Web.</p>
+</div>
 </div>
 
-<div class="stat">
-<h2>8</h2>
-Characters
+<div id="publicar" style="display:none;">
+<div class="card">
+<h2>Crear publicación</h2>
+<textarea id="postText"></textarea>
+<button class="postBtn" onclick="publicar()">Publicar</button>
 </div>
 
-<div class="stat">
-<h2>46</h2>
-Chats
+<div id="posts"></div>
 </div>
 
-<div class="stat">
-<h2>0</h2>
-Messages
+<div id="chat" style="display:none;">
+<div class="card">
+<h2>Chat Global</h2>
+
+<div class="chat-box" id="chatBox"></div>
+
+<div class="chat-input">
+<input id="mensaje" placeholder="Escribe un mensaje">
+<button onclick="enviar()">Enviar</button>
+</div>
+</div>
+</div>
+
+<div id="comunidad" style="display:none;">
+<div class="card">
+<h2>Comunidad</h2>
+<p>Únete a grupos y conoce personas.</p>
+</div>
+</div>
+
+<div id="videos" style="display:none;">
+<div class="card">
+<h2>Videos</h2>
+<iframe width="100%" height="300"
+src="https://www.youtube.com/embed/dQw4w9WgXcQ">
+</iframe>
+</div>
+</div>
+
+<div id="musica" style="display:none;">
+<div class="card">
+<h2>Música</h2>
+<audio controls style="width:100%;">
+<source src="" type="audio/mpeg">
+</audio>
+</div>
+</div>
+
+<div id="juegos" style="display:none;">
+<div class="card">
+<h2>Juegos</h2>
+<button onclick="alert('Próximamente')">Jugar</button>
+</div>
+</div>
+
+<div id="perfil" style="display:none;">
+<div class="card">
+<h2>Perfil</h2>
+<p>Nombre: Invitado</p>
+<p>Nivel: 1</p>
+<p>Publicaciones: 0</p>
+</div>
 </div>
 
 </div>
-
 </div>
-
-</section>
-
-<section class="section" id="rankings">
-<h2>🏆 Rankings</h2>
-<p>Top usuarios de PixelAi-Web.</p>
-</section>
-
-<section class="section" id="hall">
-<h2>⭐ Hall Of Fame</h2>
-<p>Miembros destacados.</p>
-</section>
-
-<section class="section" id="downloads">
-<h2>⬇ Downloads</h2>
-<p>Descargas oficiales.</p>
-</section>
-
-<section class="section" id="community">
-<h2>👥 Community</h2>
-<p>Comunidad de PixelAi-Web.</p>
-</section>
-
-<section class="section" id="characters">
-<h2>🤖 Characters</h2>
-<p>Personajes de IA.</p>
-</section>
-
-<section class="section" id="forum">
-<h2>💬 Forum</h2>
-<p>Foro de discusión.</p>
-</section>
-
-<section class="section" id="market">
-<h2>🛒 Marketplace</h2>
-<p>Marketplace oficial.</p>
-</section>
-
-<section class="section" id="changelog">
-<h2>📝 Changelog</h2>
-<p>Actualizaciones del sitio.</p>
-</section>
-
-<section class="section" id="terms">
-<h2>📄 Terms & Conditions</h2>
-<p>Términos del servicio.</p>
-</section>
 
 <script>
-function toggleMenu(){
-document.getElementById("sidebar").classList.toggle("active");
-}
-
-function goTo(id){
-document.getElementById(id).scrollIntoView({
-behavior:"smooth"
+function mostrar(id){
+document.querySelectorAll(".content > div").forEach(e=>{
+e.style.display="none";
 });
-document.getElementById("sidebar").classList.remove("active");
+document.getElementById(id).style.display="block";
 }
 
-for(let i=0;i<25;i++){
-let p=document.createElement("div");
-p.className="particle";
+function publicar(){
+let texto=document.getElementById("postText").value;
 
-let s=Math.random()*25+10;
+if(texto.trim()=="") return;
 
-p.style.width=s+"px";
-p.style.height=s+"px";
-p.style.left=Math.random()*100+"%";
-p.style.top=Math.random()*100+"%";
+let post=document.createElement("div");
+post.className="card";
+post.innerHTML="<h3>Invitado</h3><p>"+texto+"</p>";
 
-document.body.appendChild(p);
+document.getElementById("posts").prepend(post);
+document.getElementById("postText").value="";
+}
+
+function enviar(){
+let msg=document.getElementById("mensaje").value;
+
+if(msg.trim()=="") return;
+
+let div=document.createElement("div");
+div.className="msg";
+div.innerText="Invitado: "+msg;
+
+document.getElementById("chatBox").appendChild(div);
+
+document.getElementById("mensaje").value="";
+
+document.getElementById("chatBox").scrollTop=
+document.getElementById("chatBox").scrollHeight;
 }
 </script>
 
