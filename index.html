@@ -1,303 +1,666 @@
+*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MiniToToLoco-Web</title>
-
+<meta name="viewport" content="width=device-width, user-scalable=no">
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, sans-serif;
-}
-
-body{
-display:flex;
-height:100vh;
-background:#181818;
-color:white;
-}
-
-.sidebar{
-width:250px;
-background:#111;
-padding:20px;
-overflow-y:auto;
-}
-
-.logo{
-font-size:25px;
-font-weight:bold;
-margin-bottom:20px;
-text-align:center;
-color:#00aaff;
-}
-
-.menu button{
-width:100%;
-padding:12px;
-margin:5px 0;
-border:none;
-background:#222;
-color:white;
-cursor:pointer;
-border-radius:8px;
-}
-
-.menu button:hover{
-background:#00aaff;
-}
-
-.main{
-flex:1;
-display:flex;
-flex-direction:column;
-}
-
-.topbar{
-background:#222;
-padding:10px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.search{
-width:300px;
-padding:8px;
-border:none;
-border-radius:5px;
-}
-
-.content{
-flex:1;
-padding:20px;
-overflow-y:auto;
-}
-
-.card{
-background:#222;
-padding:15px;
-border-radius:10px;
-margin-bottom:15px;
-}
-
-textarea{
-width:100%;
-height:80px;
-padding:10px;
-border:none;
-border-radius:8px;
-resize:none;
-}
-
-.postBtn{
-margin-top:10px;
-padding:10px;
-background:#00aaff;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.chat-box{
-height:250px;
-overflow-y:auto;
-background:#111;
-padding:10px;
-border-radius:10px;
-margin-bottom:10px;
-}
-
-.msg{
-background:#333;
-padding:8px;
-margin:5px 0;
-border-radius:8px;
-}
-
-.chat-input{
-display:flex;
-gap:10px;
-}
-
-.chat-input input{
-flex:1;
-padding:10px;
-border:none;
-border-radius:8px;
-}
-
-.chat-input button{
-padding:10px;
-background:#00aaff;
-border:none;
-color:white;
-border-radius:8px;
-cursor:pointer;
-}
-
-.profile{
-text-align:center;
-margin-bottom:20px;
-}
-
-.avatar{
-width:80px;
-height:80px;
-background:#00aaff;
-border-radius:50%;
-margin:auto;
-margin-bottom:10px;
-}
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
 </style>
 </head>
 <body>
-
-<div class="sidebar">
-<div class="logo">MiniToToLoco-Web</div>
-
-<div class="profile">
-<div class="avatar"></div>
-<h3>Invitado</h3>
-</div>
-
-<div class="menu">
-<button onclick="mostrar('inicio')">🏠 Inicio</button>
-<button onclick="mostrar('publicar')">📝 Publicar</button>
-<button onclick="mostrar('chat')">💬 Chat</button>
-<button onclick="mostrar('comunidad')">👥 Comunidad</button>
-<button onclick="mostrar('videos')">🎥 Videos</button>
-<button onclick="mostrar('musica')">🎵 Música</button>
-<button onclick="mostrar('juegos')">🎮 Juegos</button>
-<button onclick="mostrar('perfil')">👤 Perfil</button>
-</div>
-</div>
-
-<div class="main">
-
-<div class="topbar">
-<h2>MiniToToLoco-Web</h2>
-<input class="search" placeholder="Buscar...">
-</div>
-
-<div class="content">
-
-<div id="inicio">
-<div class="card">
-<h2>Bienvenido</h2>
-<p>Red social creada para MiniToToLoco-Web.</p>
-</div>
-</div>
-
-<div id="publicar" style="display:none;">
-<div class="card">
-<h2>Crear publicación</h2>
-<textarea id="postText"></textarea>
-<button class="postBtn" onclick="publicar()">Publicar</button>
-</div>
-
-<div id="posts"></div>
-</div>
-
-<div id="chat" style="display:none;">
-<div class="card">
-<h2>Chat Global</h2>
-
-<div class="chat-box" id="chatBox"></div>
-
-<div class="chat-input">
-<input id="mensaje" placeholder="Escribe un mensaje">
-<button onclick="enviar()">Enviar</button>
-</div>
-</div>
-</div>
-
-<div id="comunidad" style="display:none;">
-<div class="card">
-<h2>Comunidad</h2>
-<p>Únete a grupos y conoce personas.</p>
-</div>
-</div>
-
-<div id="videos" style="display:none;">
-<div class="card">
-<h2>Videos</h2>
-<iframe width="100%" height="300"
-src="https://www.youtube.com/embed/dQw4w9WgXcQ">
-</iframe>
-</div>
-</div>
-
-<div id="musica" style="display:none;">
-<div class="card">
-<h2>Música</h2>
-<audio controls style="width:100%;">
-<source src="" type="audio/mpeg">
-</audio>
-</div>
-</div>
-
-<div id="juegos" style="display:none;">
-<div class="card">
-<h2>Juegos</h2>
-<button onclick="alert('Próximamente')">Jugar</button>
-</div>
-</div>
-
-<div id="perfil" style="display:none;">
-<div class="card">
-<h2>Perfil</h2>
-<p>Nombre: Invitado</p>
-<p>Nivel: 1</p>
-<p>Publicaciones: 0</p>
-</div>
-</div>
-
-</div>
-</div>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
 
 <script>
-function mostrar(id){
-document.querySelectorAll(".content > div").forEach(e=>{
-e.style.display="none";
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
 });
-document.getElementById(id).style.display="block";
-}
 
-function publicar(){
-let texto=document.getElementById("postText").value;
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
 
-if(texto.trim()=="") return;
-
-let post=document.createElement("div");
-post.className="card";
-post.innerHTML="<h3>Invitado</h3><p>"+texto+"</p>";
-
-document.getElementById("posts").prepend(post);
-document.getElementById("postText").value="";
-}
-
-function enviar(){
-let msg=document.getElementById("mensaje").value;
-
-if(msg.trim()=="") return;
-
-let div=document.createElement("div");
-div.className="msg";
-div.innerText="Invitado: "+msg;
-
-document.getElementById("chatBox").appendChild(div);
-
-document.getElementById("mensaje").value="";
-
-document.getElementById("chatBox").scrollTop=
-document.getElementById("chatBox").scrollHeight;
-}
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
 </script>
-
 </body>
 </html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
+</script>
+</body>
+</html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
+</script>
+</body>
+</html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
+</script>
+</body>
+</html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
+</script>
+</body>
+</html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
+</script>
+</body>
+</html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'px';
+
+  // Normalizado de -1 a 1
+  let normX = dx / maxDist;
+  let normY = -dy / maxDist; // Y invertida
+
+  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
+
+  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
+  // ejemplo: player.x += normX * velocidad;
+}
+
+base.addEventListener('touchstart', e => {
+  dragging = true;
+  handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener('touchend', e => {
+  dragging = false;
+  stick.style.left = (centerX - 35) + 'px';
+  stick.style.top = (centerY - 35) + 'px';
+  output.innerText = `X: 0, Y: 0`;
+});
+</script>
+</body>
+</html>
+*Cómo funciona:*
+1. *base*: el círculo grande. Es donde tocas.
+2. *stick*: el círculo chico. Sigue tu dedo.
+3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
+    Ejemplo: `jugador.x += normX * 5`
+
+*Tips :*
+- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
+- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
+- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
+Copia y pega esto en un archivo `.html` y ábrelo en el celular:
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
+  #base {
+    position:absolute; width:150px; height:150px;
+    background:rgba(255,255,255,0.1); border:3px solid #555;
+    border-radius:50%; left:50px; bottom:50px;
+  }
+  #stick {
+    position:absolute; width:70px; height:70px;
+    background:rgba(0,200,255,0.8); border-radius:50%;
+    left:90px; bottom:90px;
+  }
+  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="base"></div>
+<div id="stick"></div>
+<div id="output">X: 0, Y: 0</div>
+
+<script>
+const base = document.getElementById('base');
+const stick = document.getElementById('stick');
+const output = document.getElementById('output');
+
+let baseRect = base.getBoundingClientRect();
+let centerX = baseRect.left + baseRect.width/2;
+let centerY = baseRect.top + baseRect.height/2;
+let maxDist = baseRect.width/2;
+
+let dragging = false;
+
+function handleMove(touchX, touchY){
+  let dx = touchX - centerX;
+  let dy = touchY - centerY;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > maxDist) {
+    dx = dx * maxDist / dist;
+    dy = dy * maxDist / dist;
+  }
+
+  stick.style.left = (centerX + dx - 35) + 'px';
+  stick.style.top = (centerY + dy - 35) + 'p
