@@ -1,666 +1,728 @@
-*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNTAX</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #080808;
+      color: white;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    #loading,
+    #offline,
+    #login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+    }
+
+    #offline {
+      display: none;
+      text-align: center;
+    }
+
+    #login {
+      display: none;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 4px;
+    }
+
+    .blue {
+      color: #1683ff;
+    }
+
+    .login-box {
+      width: min(400px, 100%);
+      background: #151515;
+      padding: 30px;
+      border-radius: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 7px 0;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #0d0d0d;
+      color: white;
+      outline: none;
+    }
+
+    button {
+      border: 0;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: #1683ff;
+      color: white;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    header {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      gap: 30px;
+      background: rgba(5,5,5,.95);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav button {
+      background: transparent;
+      color: #aaa;
+      padding: 5px;
+    }
+
+    nav button:hover {
+      color: white;
+    }
+
+    .search {
+      margin-left: auto;
+      width: 250px;
+      margin-top: 0;
+    }
+
+    .hero {
+      min-height: 480px;
+      padding: 80px 7%;
+      display: flex;
+      align-items: center;
+      background:
+        linear-gradient(90deg, #080808 20%, transparent),
+        linear-gradient(0deg, #080808, transparent);
+    }
+
+    .hero-content {
+      max-width: 600px;
+    }
+
+    .hero h1 {
+      font-size: clamp(35px, 6vw, 70px);
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .content {
+      padding: 25px 5%;
+    }
+
+    .section-title {
+      margin: 30px 0 15px;
+    }
+
+    .movies {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 18px;
+    }
+
+    .movie {
+      background: #151515;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .movie:hover {
+      transform: translateY(-5px);
+    }
+
+    .movie img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .movie-info {
+      padding: 10px;
+    }
+
+    .movie-title {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .movie-year {
+      color: #888;
+      margin-top: 5px;
+      font-size: 13px;
+    }
+
+    #playerModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .player-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    #videoPlayer {
+      width: 100%;
+      height: calc(100vh - 100px);
+      background: #000;
+    }
+
+    .close {
+      background: #222;
+      color: white;
+    }
+
+    .error {
+      color: #ff5555;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
+
+  <div id="loading">
+    <div class="logo">SYN<span class="blue">TAX</span></div>
+    <div>Conectando con Supabase...</div>
+  </div>
+
+  <div id="offline">
+    <div class="logo">SYN<span class="blue">TAX</span></div>
+    <h2>Servidor no disponible</h2>
+    <p>SYNTAX necesita una conexión válida con Supabase para funcionar.</p>
+    <button class="primary" onclick="location.reload()">Reintentar</button>
+  </div>
+
+  <div id="login">
+    <div class="login-box">
+      <div class="logo">SYN<span class="blue">TAX</span></div>
+
+      <br>
+
+      <input id="email" type="email" placeholder="Correo">
+      <input id="password" type="password" placeholder="Contraseña">
+
+      <button class="primary" onclick="login()">Iniciar sesión</button>
+      <button class="primary" onclick="register()">Crear cuenta</button>
+
+      <div id="loginError" class="error"></div>
+    </div>
+  </div>
+
+  <div id="app">
+
+    <header>
+      <div class="logo" style="font-size:25px">
+        SYN<span class="blue">TAX</span>
+      </div>
+
+      <nav>
+        <button onclick="loadHome()">Inicio</button>
+        <button onclick="loadFavorites()">Favoritos</button>
+        <button onclick="logout()">Salir</button>
+      </nav>
+
+      <input
+        id="search"
+        class="search"
+        placeholder="Buscar películas..."
+        onkeydown="if(event.key==='Enter') searchMovies()"
+      >
+    </header>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1 id="heroTitle">SYNTAX</h1>
+        <p id="heroDescription">
+          Tu biblioteca multimedia.
+        </p>
+        <button class="primary" style="width:auto" onclick="openPlayer()">
+          ▶ Reproducir
+        </button>
+      </div>
+    </section>
+
+    <main class="content">
+
+      <h2 class="section-title">Películas populares</h2>
+      <div id="movies" class="movies"></div>
+
+      <h2 class="section-title">Resultados</h2>
+      <div id="results" class="movies"></div>
+
+    </main>
+  </div>
+
+  <div id="playerModal">
+
+    <div class="player-top">
+      <h2 id="playerTitle">SYNTAX Player</h2>
+      <button class="close" onclick="closePlayer()">✕ Cerrar</button>
+    </div>
+
+    <!--
+      Coloca aquí una URL de video que tengas autorización para reproducir.
+      Ejemplo:
+      https://tuservidor.com/videos/pelicula.mp4
+    -->
+
+    <video id="videoPlayer" controls playsinline></video>
+
+  </div>
 
 <script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
+  /*
+   * ============================
+   * CONFIGURACIÓN
+   * ============================
+   */
 
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
+  const SUPABASE_URL = "TU_URL_DE_SUPABASE";
+  const SUPABASE_ANON_KEY = "TU_CLAVE_PUBLICA_DE_SUPABASE";
 
-let dragging = false;
+  const TMDB_API_KEY = "79c66dbbf5ff59bb174c36b4c032ee96";
 
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
+  const TMDB_BASE = "https://api.themoviedb.org/3";
+  const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+  let currentUser = null;
+  let selectedMovie = null;
+
+
+  /*
+   * ============================
+   * INICIO
+   * ============================
+   */
+
+  async function start() {
+
+    if (
+      !SUPABASE_URL.startsWith("https://") ||
+      SUPABASE_ANON_KEY === "TU_CLAVE_PUBLICA_DE_SUPABASE"
+    ) {
+      showOffline();
+      return;
+    }
+
+    try {
+
+      const { data, error } =
+        await supabaseClient.auth.getSession();
+
+      if (error) throw error;
+
+      currentUser = data.session?.user || null;
+
+      if (!currentUser) {
+        showLogin();
+        return;
+      }
+
+      showApp();
+
+      await loadHome();
+
+    } catch (error) {
+
+      console.error(error);
+      showOffline();
+
+    }
   }
 
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
 
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
+  function showOffline() {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("offline").style.display = "flex";
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "none";
+  }
 
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
 
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
+  function showLogin() {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("offline").style.display = "none";
+    document.getElementById("login").style.display = "flex";
+    document.getElementById("app").style.display = "none";
+  }
 
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
 
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
+  function showApp() {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("offline").style.display = "none";
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  }
 
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
+
+  /*
+   * ============================
+   * AUTH
+   * ============================
+   */
+
+  async function login() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      document.getElementById("loginError").textContent =
+        error.message;
+      return;
+    }
+
+    currentUser = data.user;
+
+    showApp();
+    loadHome();
+  }
+
+
+  async function register() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const { error } =
+      await supabaseClient.auth.signUp({
+        email,
+        password
+      });
+
+    if (error) {
+      document.getElementById("loginError").textContent =
+        error.message;
+      return;
+    }
+
+    document.getElementById("loginError").textContent =
+      "Cuenta creada. Revisá tu correo si la confirmación está activada.";
+  }
+
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+    showLogin();
+  }
+
+
+  /*
+   * ============================
+   * TMDB
+   * ============================
+   */
+
+  async function tmdb(endpoint) {
+
+    const response = await fetch(
+      TMDB_BASE + endpoint +
+      (endpoint.includes("?") ? "&" : "?") +
+      "api_key=" + encodeURIComponent(TMDB_API_KEY) +
+      "&language=es-ES"
+    );
+
+    if (!response.ok)
+      throw new Error("TMDB error");
+
+    return response.json();
+  }
+
+
+  async function loadHome() {
+
+    try {
+
+      const data =
+        await tmdb("/movie/popular?page=1");
+
+      renderMovies(
+        data.results,
+        document.getElementById("movies")
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+  }
+
+
+  async function searchMovies() {
+
+    const query =
+      document.getElementById("search").value.trim();
+
+    if (!query) return;
+
+    try {
+
+      const data =
+        await tmdb(
+          "/search/movie?query=" +
+          encodeURIComponent(query)
+        );
+
+      renderMovies(
+        data.results,
+        document.getElementById("results")
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+  }
+
+
+  function renderMovies(list, container) {
+
+    container.innerHTML = "";
+
+    list.forEach(movie => {
+
+      if (!movie.poster_path) return;
+
+      const card =
+        document.createElement("div");
+
+      card.className = "movie";
+
+      card.innerHTML = `
+        <img src="${TMDB_IMG}${movie.poster_path}" alt="">
+        <div class="movie-info">
+          <div class="movie-title">
+            ${escapeHTML(movie.title)}
+          </div>
+          <div class="movie-year">
+            ${(movie.release_date || "").slice(0,4)}
+          </div>
+        </div>
+      `;
+
+      card.onclick = () => selectMovie(movie);
+
+      container.appendChild(card);
+
+    });
+  }
+
+
+  function selectMovie(movie) {
+
+    selectedMovie = movie;
+
+    document.getElementById("heroTitle").textContent =
+      movie.title;
+
+    document.getElementById("heroDescription").textContent =
+      movie.overview ||
+      "Sin descripción disponible.";
+
+    document.getElementById("playerTitle").textContent =
+      movie.title;
+  }
+
+
+  /*
+   * ============================
+   * FAVORITOS SUPABASE
+   * ============================
+   */
+
+  async function addFavorite() {
+
+    if (!currentUser || !selectedMovie)
+      return;
+
+    const { error } =
+      await supabaseClient
+        .from("favorites")
+        .insert({
+          user_id: currentUser.id,
+          movie_id: selectedMovie.id,
+          title: selectedMovie.title,
+          poster_path: selectedMovie.poster_path
+        });
+
+    if (error)
+      console.error(error);
+  }
+
+
+  async function loadFavorites() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("favorites")
+        .select("*")
+        .eq("user_id", currentUser.id);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const movies =
+      data.map(item => ({
+        id: item.movie_id,
+        title: item.title,
+        poster_path: item.poster_path
+      }));
+
+    renderMovies(
+      movies,
+      document.getElementById("movies")
+    );
+  }
+
+
+  /*
+   * ============================
+   * PLAYER
+   * ============================
+   */
+
+  function openPlayer() {
+
+    if (!selectedMovie) {
+      alert("Seleccioná una película primero.");
+      return;
+    }
+
+    document.getElementById("playerModal").style.display =
+      "block";
+
+    document.getElementById("playerTitle").textContent =
+      selectedMovie.title;
+
+    /*
+     * EJEMPLO PARA TU PROPIO VIDEO:
+     *
+     * document.getElementById("videoPlayer").src =
+     * "https://tu-servidor.com/video.mp4";
+     *
+     * No se incluye una fuente de películas no autorizada.
+     */
+
+  }
+
+
+  function closePlayer() {
+
+    const video =
+      document.getElementById("videoPlayer");
+
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+
+    document.getElementById("playerModal").style.display =
+      "none";
+  }
+
+
+  /*
+   * ============================
+   * SEGURIDAD BÁSICA
+   * ============================
+   */
+
+  function escapeHTML(value) {
+
+    const div =
+      document.createElement("div");
+
+    div.textContent =
+      value || "";
+
+    return div.innerHTML;
+  }
+
+
+  start();
 </script>
+
 </body>
 </html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
-
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
-
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
-
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
-
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
-</script>
-</body>
-</html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
-
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
-
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
-
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
-
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
-</script>
-</body>
-</html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
-
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
-
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
-
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
-
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
-</script>
-</body>
-</html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
-
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
-
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
-
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
-
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
-</script>
-</body>
-</html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
-
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
-
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
-
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
-
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
-</script>
-</body>
-</html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'px';
-
-  // Normalizado de -1 a 1
-  let normX = dx / maxDist;
-  let normY = -dy / maxDist; // Y invertida
-
-  output.innerText = `X: ${normX.toFixed(2)}, Y: ${normY.toFixed(2)}`;
-
-  // AQUÍ VA TU LÓGICA DE MOVIMIENTO
-  // ejemplo: player.x += normX * velocidad;
-}
-
-base.addEventListener('touchstart', e => {
-  dragging = true;
-  handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchmove', e => {
-  if(dragging) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-});
-
-document.addEventListener('touchend', e => {
-  dragging = false;
-  stick.style.left = (centerX - 35) + 'px';
-  stick.style.top = (centerY - 35) + 'px';
-  output.innerText = `X: 0, Y: 0`;
-});
-</script>
-</body>
-</html>
-*Cómo funciona:*
-1. *base*: el círculo grande. Es donde tocas.
-2. *stick*: el círculo chico. Sigue tu dedo.
-3. *normX, normY*: van de -1 a 1. Úsalos para mover a tu personaje.
-    Ejemplo: `jugador.x += normX * 5`
-
-*Tips :*
-- *Para Unity*: usa el "On-Screen Stick" del Input System. Es lo mismo pero ya hecho.
-- *Para Godot*: hay un nodo `TouchScreenButton` + código para calcular dx, dy.
-- *Para que no se mueva la pantalla*: `touch-action: none` en el CSS.*Joystick táctil simple - HTML + JS*
-Copia y pega esto en un archivo `.html` y ábrelo en el celular:
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-  body { margin:0; background:#111; overflow:hidden; touch-action: none; }
-  #base {
-    position:absolute; width:150px; height:150px;
-    background:rgba(255,255,255,0.1); border:3px solid #555;
-    border-radius:50%; left:50px; bottom:50px;
-  }
-  #stick {
-    position:absolute; width:70px; height:70px;
-    background:rgba(0,200,255,0.8); border-radius:50%;
-    left:90px; bottom:90px;
-  }
-  #output { color:white; position:absolute; top:20px; left:20px; font-family:sans-serif; }
-</style>
-</head>
-<body>
-<div id="base"></div>
-<div id="stick"></div>
-<div id="output">X: 0, Y: 0</div>
-
-<script>
-const base = document.getElementById('base');
-const stick = document.getElementById('stick');
-const output = document.getElementById('output');
-
-let baseRect = base.getBoundingClientRect();
-let centerX = baseRect.left + baseRect.width/2;
-let centerY = baseRect.top + baseRect.height/2;
-let maxDist = baseRect.width/2;
-
-let dragging = false;
-
-function handleMove(touchX, touchY){
-  let dx = touchX - centerX;
-  let dy = touchY - centerY;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist > maxDist) {
-    dx = dx * maxDist / dist;
-    dy = dy * maxDist / dist;
-  }
-
-  stick.style.left = (centerX + dx - 35) + 'px';
-  stick.style.top = (centerY + dy - 35) + 'p
