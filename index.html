@@ -1,19 +1,15 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>Worm Arena Online</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-}
-
+*{box-sizing:border-box}
 html,body{
     margin:0;
     width:100%;
@@ -23,448 +19,176 @@ html,body{
     color:white;
     font-family:Arial,sans-serif;
 }
-
-canvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-}
+canvas{position:fixed;inset:0;width:100%;height:100%}
 
 #menu{
-    position:fixed;
-    inset:0;
-    z-index:100;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-
-    background:
-        radial-gradient(
-            circle,
-            #162744 0%,
-            #070a12 60%
-        );
+    position:fixed;inset:0;z-index:100;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    background:radial-gradient(circle,#162744,#070a12 65%);
 }
-
 #menu h1{
-    font-size:75px;
-    margin:0;
-
-    color:#42ff78;
-
-    text-shadow:
-        0 0 20px #42ff78,
-        0 0 60px #42ff78;
+    font-size:70px;margin:0;color:#42ff78;
+    text-shadow:0 0 20px #42ff78,0 0 60px #42ff78;
 }
-
-#menu p{
-    color:#9eabc2;
-}
-
 #name{
-    width:280px;
-    padding:15px;
-
-    border-radius:10px;
-    border:1px solid #34496c;
-
-    background:#101827;
-    color:white;
-
-    outline:none;
-
-    text-align:center;
-    font-size:18px;
+    width:280px;padding:15px;border-radius:10px;
+    border:1px solid #34496c;background:#101827;
+    color:white;outline:none;text-align:center;font-size:18px;
 }
-
 button{
-    border:0;
-    border-radius:9px;
-
-    padding:12px 22px;
-
-    background:#42ff78;
-    color:#06100a;
-
-    font-weight:bold;
-    cursor:pointer;
+    border:0;border-radius:9px;padding:12px 20px;
+    background:#42ff78;color:#06100a;
+    font-weight:bold;cursor:pointer;
 }
+button:hover{filter:brightness(1.15)}
 
-button:hover{
-    filter:brightness(1.15);
-}
-
-#hud{
-    position:fixed;
-    z-index:10;
-
-    top:15px;
-    left:15px;
-
-    padding:14px 18px;
-
-    min-width:230px;
-
+#hud,#ranking,#voicePanel,#admin{
+    position:fixed;z-index:20;
+    background:rgba(7,11,21,.92);
     border:1px solid #273958;
     border-radius:12px;
-
-    background:rgba(7,11,21,.88);
-
     backdrop-filter:blur(10px);
 }
+#hud{top:15px;left:15px;padding:14px 18px;min-width:230px}
+#ranking{top:15px;right:15px;width:240px;padding:15px}
+#ranking h3{margin:0 0 10px}
+.rank{display:flex;justify-content:space-between;padding:5px 0}
 
-.green{
-    color:#42ff78;
+#voicePanel{
+    left:15px;bottom:40px;width:250px;padding:14px;
 }
-
-.yellow{
-    color:#ffd52e;
-}
-
-.blue{
-    color:#4db5ff;
-}
-
-.purple{
-    color:#b879ff;
-}
-
-#ranking{
-    position:fixed;
-    z-index:10;
-
-    top:15px;
-    right:15px;
-
-    width:240px;
-
-    padding:15px;
-
-    border:1px solid #273958;
-    border-radius:12px;
-
-    background:rgba(7,11,21,.9);
-}
-
-#ranking h3{
-    margin:0 0 12px;
-}
-
-.rank{
-    display:flex;
-    justify-content:space-between;
-
-    padding:5px 0;
-
-    color:#c8d2e4;
-}
-
-#connection{
-    position:fixed;
-    z-index:10;
-
-    bottom:12px;
-    left:15px;
-
-    font-size:13px;
-
-    color:#8998af;
-}
+#voicePanel button{width:100%;margin-top:10px}
+#voiceStatus{font-size:12px;color:#8998af;margin-top:8px}
+.voicePlayer{padding:5px 0;color:#cbd5e1}
 
 #admin{
-    position:fixed;
-    z-index:50;
-
-    top:70px;
-    left:20px;
-
-    width:370px;
-
-    display:none;
-
-    padding:20px;
-
-    border-radius:15px;
-    border:1px solid #5b6e96;
-
-    background:rgba(9,14,26,.98);
-
-    box-shadow:
-        0 20px 70px rgba(0,0,0,.6);
+    top:70px;left:20px;width:370px;
+    display:none;padding:20px;
+    box-shadow:0 20px 70px rgba(0,0,0,.6);
 }
+#admin h2{margin-top:0;color:#bd7cff}
+.adminInfo{padding:7px 0;color:#aab8cf}
+.adminRow{display:flex;gap:8px;margin:8px 0}
+.adminRow button{flex:1;background:#202d46;color:white}
+#adminStatus{font-size:12px;color:#8291a9;margin-top:10px}
 
-#admin h2{
-    margin-top:0;
-    color:#bd7cff;
+#connection{
+    position:fixed;z-index:20;bottom:12px;left:15px;
+    font-size:13px;color:#8998af;
 }
-
-.adminInfo{
-    padding:8px 0;
-    color:#aab8cf;
+#pause,#gameOver{
+    position:fixed;z-index:90;inset:0;
+    display:none;align-items:center;justify-content:center;
+    flex-direction:column;background:rgba(0,0,0,.75);
 }
-
-.adminRow{
-    display:flex;
-    gap:8px;
-
-    margin:8px 0;
-}
-
-.adminRow button{
-    flex:1;
-
-    background:#202d46;
-    color:white;
-}
-
-.adminRow button:hover{
-    background:#30415f;
-}
-
-#adminStatus{
-    margin-top:12px;
-
-    font-size:13px;
-
-    color:#8291a9;
-}
-
-#pause{
-    position:fixed;
-    z-index:40;
-
-    inset:0;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-
-    background:rgba(0,0,0,.55);
-
-    font-size:70px;
-    font-weight:bold;
-
-    color:#4db5ff;
-}
-
-#gameOver{
-    position:fixed;
-    z-index:90;
-
-    inset:0;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-
-    background:rgba(0,0,0,.8);
-}
-
-#gameOver h1{
-    font-size:65px;
-    color:#ff5265;
-}
-
+#pause{font-size:70px;color:#4db5ff}
+#gameOver h1{font-size:65px;color:#ff5265}
 </style>
 </head>
 
 <body>
 
 <div id="menu">
-
     <h1>WORM ARENA</h1>
+    <p>MULTIPLAYER ONLINE</p>
 
-    <p>
-        MULTIPLAYER ONLINE
-    </p>
-
-    <input
-        id="name"
-        maxlength="16"
-        placeholder="Nombre del jugador"
-    >
+    <input id="name" maxlength="16" placeholder="Nombre del jugador">
 
     <br>
 
-    <button id="play">
-        JUGAR
-    </button>
+    <button id="play">JUGAR</button>
 
-    <p>
-        WASD = mover · SPACE = boost · F1 = admin
-    </p>
-
+    <p>WASD = mover · SPACE = boost · F1 = admin</p>
 </div>
-
 
 <canvas id="game"></canvas>
 
-
 <div id="hud">
-
-    <div class="green">
-        🐍 WORM ARENA ONLINE
-    </div>
-
-    <div>
-        🪙 Monedas:
-        <b id="score" class="yellow">0</b>
-    </div>
-
-    <div>
-        📏 Longitud:
-        <b id="length">0</b>
-    </div>
-
-    <div>
-        👥 Jugadores:
-        <b id="players">0</b>
-    </div>
-
+    <div style="color:#42ff78">🐍 WORM ARENA ONLINE</div>
+    <div>🪙 Monedas: <b id="score">20</b></div>
+    <div>📏 Longitud: <b id="length">0</b></div>
+    <div>👥 Jugadores: <b id="players">0</b></div>
 </div>
-
 
 <div id="ranking">
-
     <h3>🏆 RANKING</h3>
-
     <div id="rankingList"></div>
-
 </div>
 
+<div id="voicePanel">
+    <b>🎙️ VOZ</b>
 
-<div id="connection">
-    DESCONECTADO
+    <button id="voiceBtn">
+        🎤 Activar micrófono
+    </button>
+
+    <div id="voiceStatus">
+        Micrófono apagado
+    </div>
+
+    <div id="voicePlayers"></div>
 </div>
 
-
-<!-- =====================================================
-     ADMIN
-===================================================== -->
+<div id="connection">DESCONECTADO</div>
 
 <div id="admin">
+    <h2>🛠️ ADMIN ONLINE</h2>
 
-    <h2>🛠️ ADMIN PANEL ONLINE</h2>
-
-    <div class="adminInfo">
-        Bots:
-        <b id="adminBots">0</b>
-    </div>
-
-    <div class="adminInfo">
-        Comida:
-        <b id="adminFood">0</b>
-    </div>
-
-    <div class="adminInfo">
-        Jugadores:
-        <b id="adminPlayers">0</b>
-    </div>
+    <div class="adminInfo">Bots: <b id="adminBots">0</b></div>
+    <div class="adminInfo">Comida: <b id="adminFood">0</b></div>
+    <div class="adminInfo">Jugadores: <b id="adminPlayers">0</b></div>
 
     <hr>
 
     <div class="adminRow">
-
-        <button onclick="adminAddBots()">
-            +10 BOTS
-        </button>
-
-        <button onclick="adminRemoveBots()">
-            -10 BOTS
-        </button>
-
+        <button onclick="adminAddBots()">+10 BOTS</button>
+        <button onclick="adminRemoveBots()">-10 BOTS</button>
     </div>
 
     <div class="adminRow">
-
-        <button onclick="adminAddFood()">
-            +100 COMIDA
-        </button>
-
-        <button onclick="adminClearFood()">
-            LIMPIAR
-        </button>
-
+        <button onclick="adminAddFood()">+100 COMIDA</button>
+        <button onclick="adminClearFood()">LIMPIAR</button>
     </div>
 
     <div class="adminRow">
-
-        <button onclick="adminGrow()">
-            +100 CRECER
-        </button>
-
-        <button onclick="adminKillBot()">
-            MATAR BOT
-        </button>
-
+        <button onclick="adminGrow()">+100 CRECER</button>
+        <button onclick="adminKillBot()">MATAR BOT</button>
     </div>
 
     <div class="adminRow">
-
-        <button onclick="adminRevive()">
-            REVIVIR
-        </button>
-
-        <button onclick="adminReset()">
-            RESET TODO
-        </button>
-
+        <button onclick="adminRevive()">REVIVIR</button>
+        <button onclick="adminReset()">RESET</button>
     </div>
 
     <div class="adminRow">
-
-        <button onclick="adminPause()">
-            PAUSA GLOBAL
-        </button>
-
-        <button onclick="adminResume()">
-            CONTINUAR
-        </button>
-
+        <button onclick="adminPause()">PAUSA GLOBAL</button>
+        <button onclick="adminResume()">CONTINUAR</button>
     </div>
 
-    <div id="adminStatus">
-        F1 = cerrar panel
-    </div>
-
+    <div id="adminStatus">F1 = cerrar panel</div>
 </div>
 
-
-<div id="pause">
-    PAUSA
-</div>
-
+<div id="pause">PAUSA</div>
 
 <div id="gameOver">
-
     <h1>💀 ELIMINADO</h1>
-
     <p id="finalScore"></p>
-
-    <button onclick="location.reload()">
-        VOLVER A JUGAR
-    </button>
-
+    <button onclick="location.reload()">VOLVER A JUGAR</button>
 </div>
-
 
 <script>
 
-/* =========================================================
+/* =====================================================
    SUPABASE
-========================================================= */
+   PEGÁ TUS DATOS ACÁ
+===================================================== */
 
 const SUPABASE_URL =
-    "https://lofciwbtbwenjfjcualt.supabase.co";
+    "TU_SUPABASE_URL";
 
 const SUPABASE_KEY =
-    "sb_publishable_TeyZSK0_1Pq9JprNwtRYIQ_YEU8VKFT";
+    "TU_SUPABASE_PUBLISHABLE_KEY";
 
 const supabaseClient =
     window.supabase.createClient(
@@ -473,1110 +197,571 @@ const supabaseClient =
     );
 
 
-/* =========================================================
-   CANVAS
-========================================================= */
-
-const canvas =
-    document.getElementById("game");
-
-const ctx =
-    canvas.getContext("2d");
-
-
-function resize(){
-
-    canvas.width =
-        window.innerWidth;
-
-    canvas.height =
-        window.innerHeight;
-
-}
-
-resize();
-
-window.addEventListener(
-    "resize",
-    resize
-);
-
-
-/* =========================================================
-   CONFIGURACIÓN
-========================================================= */
+/* =====================================================
+   CONFIG
+===================================================== */
 
 const WORLD = 5000;
-
 const FOOD_TARGET = 600;
-
 const MAX_BOTS = 40;
-
 const BODY_GAP = 5;
 
-const SEND_RATE = 50;
-
-
-/* =========================================================
-   ESTADO
-========================================================= */
-
 let running = false;
-
 let paused = false;
-
+let gameOver = false;
 let adminOpen = false;
 
-let gameOver = false;
-
 let playerId = null;
-
 let channel = null;
+let voiceChannel = null;
 
-let lastSend = 0;
+let localStream = null;
+let microphoneEnabled = false;
 
-
-/* =========================================================
-   PLAYER
-========================================================= */
-
-const player = {
-
-    id:null,
-
-    name:"Player",
-
-    color:"#42ff78",
-
-    x:WORLD/2,
-
-    y:WORLD/2,
-
-    angle:0,
-
-    score:20,
-
-    alive:true,
-
-    body:[]
-
-};
-
-
-/* =========================================================
-   MULTIPLAYER
-========================================================= */
-
-const remotePlayers =
-    new Map();
-
-
-/* =========================================================
-   BOTS
-========================================================= */
+const peers = new Map();
+const remoteAudio = new Map();
+const remotePlayers = new Map();
 
 const bots = [];
-
-
-/* =========================================================
-   FOOD
-========================================================= */
-
 const foods = [];
-
-
-/* =========================================================
-   INPUT
-========================================================= */
 
 const keys = {};
 
-window.addEventListener(
-    "keydown",
-    e => {
 
-        const key =
-            e.key.toLowerCase();
+/* =====================================================
+   CANVAS
+===================================================== */
 
-        keys[key] = true;
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
+function resize(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+}
+resize();
 
-        if(e.key === "F1"){
-
-            e.preventDefault();
-
-            adminOpen =
-                !adminOpen;
-
-            document.getElementById(
-                "admin"
-            ).style.display =
-                adminOpen
-                ? "block"
-                : "none";
-
-        }
+addEventListener("resize",resize);
 
 
-        if(key === "p"){
+/* =====================================================
+   PLAYER
+===================================================== */
 
-            paused =
-                !paused;
+const player = {
+    id:null,
+    name:"Player",
+    color:"#42ff78",
+    x:WORLD/2,
+    y:WORLD/2,
+    angle:0,
+    score:20,
+    alive:true,
+    body:[]
+};
 
-            updatePause();
 
-        }
+/* =====================================================
+   INPUT
+===================================================== */
 
+addEventListener("keydown",e=>{
+
+    const key=e.key.toLowerCase();
+    keys[key]=true;
+
+    if(e.key==="F1"){
+        e.preventDefault();
+
+        adminOpen=!adminOpen;
+
+        document.getElementById("admin").style.display =
+            adminOpen ? "block" : "none";
     }
-);
+
+});
+
+addEventListener("keyup",e=>{
+    keys[e.key.toLowerCase()]=false;
+});
 
 
-window.addEventListener(
-    "keyup",
-    e => {
-
-        keys[
-            e.key.toLowerCase()
-        ] = false;
-
-    }
-);
-
-
-/* =========================================================
+/* =====================================================
    UTILS
-========================================================= */
+===================================================== */
 
 function random(min,max){
-
-    return Math.random() *
-        (max-min)+min;
-
+    return Math.random()*(max-min)+min;
 }
 
-
-function distance(
-    x1,
-    y1,
-    x2,
-    y2
-){
-
-    return Math.hypot(
-        x1-x2,
-        y1-y2
-    );
-
+function distance(x1,y1,x2,y2){
+    return Math.hypot(x1-x2,y1-y2);
 }
-
 
 function randomColor(){
 
-    const colors = [
-
-        "#42ff78",
-        "#4db5ff",
-        "#ff536b",
-        "#ff9b32",
-        "#bd6cff",
-        "#ff5cc8",
-        "#44dfd0",
-        "#eeee55"
-
+    const colors=[
+        "#42ff78","#4db5ff","#ff536b",
+        "#ff9b32","#bd6cff","#ff5cc8",
+        "#44dfd0","#eeee55"
     ];
 
     return colors[
-        Math.floor(
-            Math.random()*colors.length
-        )
+        Math.floor(Math.random()*colors.length)
     ];
-
 }
 
 
-/* =========================================================
+/* =====================================================
    BODY
-========================================================= */
+===================================================== */
 
 function createBody(worm){
 
-    worm.body = [];
+    worm.body=[];
 
-    const length =
-        Math.floor(
-            25 +
-            worm.score * 2
-        );
+    const length=Math.floor(
+        25+worm.score*2
+    );
 
-    for(
-        let i=0;
-        i<length;
-        i++
-    ){
+    for(let i=0;i<length;i++){
 
         worm.body.push({
+            x:worm.x-
+                Math.cos(worm.angle)*i*BODY_GAP,
 
-            x:
-                worm.x -
-                Math.cos(
-                    worm.angle
-                ) *
-                i *
-                BODY_GAP,
-
-            y:
-                worm.y -
-                Math.sin(
-                    worm.angle
-                ) *
-                i *
-                BODY_GAP
-
+            y:worm.y-
+                Math.sin(worm.angle)*i*BODY_GAP
         });
 
     }
-
 }
 
 
-/* =========================================================
+/* =====================================================
    FOOD
-========================================================= */
+===================================================== */
 
-function createFood(
-    x=null,
-    y=null
-){
+function createFood(x=null,y=null){
 
-    const type =
-        Math.random();
+    const r=Math.random();
 
-    let value;
-    let color;
+    let value=1;
+    let color="#ffd52e";
 
-    if(type < .78){
-
-        value=1;
-        color="#ffd52e";
-
-    }
-    else if(type < .95){
-
+    if(r<.15){
         value=3;
         color="#ff9638";
-
     }
-    else{
 
+    if(r<.04){
         value=7;
         color="#4db5ff";
-
     }
 
-
     return {
-
-        x:
-            x === null
-            ? random(30,WORLD-30)
-            : x,
-
-        y:
-            y === null
-            ? random(30,WORLD-30)
-            : y,
-
+        x:x===null?random(30,WORLD-30):x,
+        y:y===null?random(30,WORLD-30):y,
         value,
-
         color
-
     };
-
 }
-
 
 function generateFood(){
 
-    while(
-        foods.length <
-        FOOD_TARGET
-    ){
-
-        foods.push(
-            createFood()
-        );
-
+    while(foods.length<FOOD_TARGET){
+        foods.push(createFood());
     }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    BOTS
-========================================================= */
+===================================================== */
 
 function createBot(){
 
-    const bot = {
+    const bot={
+        id:"bot-"+crypto.randomUUID(),
+        name:"BOT_"+(bots.length+1),
+        color:randomColor(),
 
-        id:
-            "bot-" +
-            crypto.randomUUID(),
+        x:random(100,WORLD-100),
+        y:random(100,WORLD-100),
 
-        name:
-            "BOT_" +
-            (bots.length+1),
+        angle:random(0,Math.PI*2),
+        targetAngle:random(0,Math.PI*2),
 
-        color:
-            randomColor(),
-
-        x:
-            random(100,WORLD-100),
-
-        y:
-            random(100,WORLD-100),
-
-        angle:
-            random(
-                0,
-                Math.PI*2
-            ),
-
-        targetAngle:
-            random(
-                0,
-                Math.PI*2
-            ),
-
-        score:
-            Math.floor(
-                random(10,80)
-            ),
-
+        score:Math.floor(random(10,80)),
         alive:true,
-
         body:[],
-
         timer:0
-
     };
 
     createBody(bot);
 
     return bot;
-
 }
-
 
 function spawnBots(){
 
-    while(
-        bots.length <
-        MAX_BOTS
-    ){
-
-        bots.push(
-            createBot()
-        );
-
+    while(bots.length<MAX_BOTS){
+        bots.push(createBot());
     }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    BOT IA
-========================================================= */
+===================================================== */
 
 function updateBot(bot){
 
-    if(!bot.alive)
-        return;
-
+    if(!bot.alive)return;
 
     bot.timer--;
 
+    if(bot.timer<=0){
 
-    if(bot.timer <= 0){
-
-        bot.timer =
-            Math.floor(
-                random(30,90)
-            );
-
+        bot.timer=Math.floor(random(30,90));
 
         let closest=null;
-
         let best=1000;
 
+        for(let i=0;i<60&&foods.length;i++){
 
-        for(
-            let i=0;
-            i<60 &&
-            foods.length;
-            i++
-        ){
-
-            const food =
+            const food=
                 foods[
                     Math.floor(
-                        Math.random() *
-                        foods.length
+                        Math.random()*foods.length
                     )
                 ];
 
+            const d=distance(
+                bot.x,bot.y,
+                food.x,food.y
+            );
 
-            const d =
-                distance(
-                    bot.x,
-                    bot.y,
-                    food.x,
-                    food.y
-                );
-
-
-            if(d < best){
-
+            if(d<best){
                 best=d;
                 closest=food;
-
             }
-
         }
-
 
         if(closest){
 
-            bot.targetAngle =
-                Math.atan2(
-                    closest.y-bot.y,
-                    closest.x-bot.x
-                );
+            bot.targetAngle=Math.atan2(
+                closest.y-bot.y,
+                closest.x-bot.x
+            );
 
         }
-
     }
 
-
-    /* Evitar bordes */
 
     const margin=350;
 
-
-    if(bot.x < margin)
-        bot.targetAngle=0;
-
-    if(bot.x > WORLD-margin)
-        bot.targetAngle=Math.PI;
-
-    if(bot.y < margin)
-        bot.targetAngle=Math.PI/2;
-
-    if(bot.y > WORLD-margin)
-        bot.targetAngle=-Math.PI/2;
+    if(bot.x<margin)bot.targetAngle=0;
+    if(bot.x>WORLD-margin)bot.targetAngle=Math.PI;
+    if(bot.y<margin)bot.targetAngle=Math.PI/2;
+    if(bot.y>WORLD-margin)bot.targetAngle=-Math.PI/2;
 
 
-    /* Evitar jugadores grandes */
+    for(const other of remotePlayers.values()){
 
-    for(
-        const other
-        of remotePlayers.values()
-    ){
+        if(!other.alive)continue;
 
-        if(!other.alive)
-            continue;
+        const d=distance(
+            bot.x,bot.y,
+            other.x,other.y
+        );
 
+        if(d<200 && other.score>bot.score){
 
-        const d =
-            distance(
-                bot.x,
-                bot.y,
-                other.x,
-                other.y
+            bot.targetAngle=Math.atan2(
+                bot.y-other.y,
+                bot.x-other.x
             );
 
-
-        if(
-            d < 200 &&
-            other.score >
-            bot.score
-        ){
-
-            bot.targetAngle =
-                Math.atan2(
-                    bot.y-other.y,
-                    bot.x-other.x
-                );
-
         }
-
     }
 
 
-    let diff =
-        bot.targetAngle -
-        bot.angle;
+    let diff=bot.targetAngle-bot.angle;
 
+    while(diff>Math.PI)diff-=Math.PI*2;
+    while(diff<-Math.PI)diff+=Math.PI*2;
 
-    while(diff > Math.PI)
-        diff -= Math.PI*2;
+    bot.angle+=diff*.065;
 
-    while(diff < -Math.PI)
-        diff += Math.PI*2;
+    const speed=bot.score>100?2.7:3.2;
 
+    bot.x+=Math.cos(bot.angle)*speed;
+    bot.y+=Math.sin(bot.angle)*speed;
 
-    bot.angle +=
-        diff*.065;
-
-
-    const speed =
-        bot.score > 100
-        ? 2.7
-        : 3.2;
-
-
-    bot.x +=
-        Math.cos(bot.angle) *
-        speed;
-
-    bot.y +=
-        Math.sin(bot.angle) *
-        speed;
-
-
-    bot.x =
-        Math.max(
-            20,
-            Math.min(
-                WORLD-20,
-                bot.x
-            )
-        );
-
-
-    bot.y =
-        Math.max(
-            20,
-            Math.min(
-                WORLD-20,
-                bot.y
-            )
-        );
-
+    bot.x=Math.max(20,Math.min(WORLD-20,bot.x));
+    bot.y=Math.max(20,Math.min(WORLD-20,bot.y));
 
     bot.body.unshift({
-
         x:bot.x,
         y:bot.y
-
     });
 
-
-    while(
-        bot.body.length >
-        25+bot.score*2
-    ){
-
+    while(bot.body.length>25+bot.score*2){
         bot.body.pop();
-
     }
 
-
     eatFood(bot);
-
 }
 
 
-/* =========================================================
+/* =====================================================
    PLAYER
-   SOLO WASD
-========================================================= */
+===================================================== */
 
 function updatePlayer(){
 
     let dx=0;
     let dy=0;
 
-
-    if(keys["w"])
-        dy--;
-
-    if(keys["s"])
-        dy++;
-
-    if(keys["a"])
-        dx--;
-
-    if(keys["d"])
-        dx++;
+    if(keys["w"])dy--;
+    if(keys["s"])dy++;
+    if(keys["a"])dx--;
+    if(keys["d"])dx++;
 
 
-    /*
-       Si hay WASD,
-       la dirección sale exclusivamente
-       del teclado.
-    */
+    if(dx!==0||dy!==0){
 
-    if(dx !== 0 || dy !== 0){
+        const target=Math.atan2(dy,dx);
 
-        const target =
-            Math.atan2(
-                dy,
-                dx
-            );
+        let diff=target-player.angle;
 
+        while(diff>Math.PI)diff-=Math.PI*2;
+        while(diff<-Math.PI)diff+=Math.PI*2;
 
-        let diff =
-            target-player.angle;
-
-
-        while(diff > Math.PI)
-            diff -= Math.PI*2;
-
-
-        while(diff < -Math.PI)
-            diff += Math.PI*2;
-
-
-        player.angle +=
-            diff*.16;
-
+        player.angle+=diff*.16;
     }
 
 
     let speed=3.6;
 
-
     if(keys[" "]){
 
-        if(player.score > 15){
+        if(player.score>15){
 
             speed=7;
 
-            if(
-                Math.random() < .06
-            ){
-
+            if(Math.random()<.06){
                 player.score--;
-
             }
-
         }
-
     }
 
 
-    player.x +=
-        Math.cos(player.angle) *
-        speed;
+    player.x+=Math.cos(player.angle)*speed;
+    player.y+=Math.sin(player.angle)*speed;
 
-    player.y +=
-        Math.sin(player.angle) *
-        speed;
-
-
-    player.x =
-        Math.max(
-            20,
-            Math.min(
-                WORLD-20,
-                player.x
-            )
-        );
-
-
-    player.y =
-        Math.max(
-            20,
-            Math.min(
-                WORLD-20,
-                player.y
-            )
-        );
+    player.x=Math.max(20,Math.min(WORLD-20,player.x));
+    player.y=Math.max(20,Math.min(WORLD-20,player.y));
 
 
     player.body.unshift({
-
         x:player.x,
         y:player.y
-
     });
 
 
-    while(
-        player.body.length >
-        25+player.score*2
-    ){
-
+    while(player.body.length>25+player.score*2){
         player.body.pop();
-
     }
 
-
     eatFood(player);
-
 }
 
 
-/* =========================================================
-   COMER
-========================================================= */
+/* =====================================================
+   FOOD
+===================================================== */
 
 function eatFood(worm){
 
-    for(
-        let i=foods.length-1;
-        i>=0;
-        i--
-    ){
+    for(let i=foods.length-1;i>=0;i--){
 
-        const food =
-            foods[i];
+        const food=foods[i];
 
+        if(distance(
+            worm.x,worm.y,
+            food.x,food.y
+        )<23){
 
-        if(
-            distance(
-                worm.x,
-                worm.y,
-                food.x,
-                food.y
-            ) < 23
-        ){
+            worm.score+=food.value;
 
-            worm.score +=
-                food.value;
-
-            foods.splice(
-                i,
-                1
-            );
-
+            foods.splice(i,1);
         }
-
     }
-
 }
 
 
-/* =========================================================
-   COLISIÓN REAL
-=========================================================
-
-   IMPORTANTE:
-
-   cabeza -> cuerpo enemigo = muere cabeza
-
-   Esto significa:
-
-   BOT toca tu cola:
-       BOT MUERE
-
-   Tú tocas cola de BOT:
-       TÚ MUERES
-
-   Jugador toca cola de jugador:
-       el jugador que tocó muere
-========================================================= */
+/* =====================================================
+   COLISIONES
+===================================================== */
 
 function killWorm(worm){
 
-    if(!worm.alive)
-        return;
-
+    if(!worm.alive)return;
 
     worm.alive=false;
 
+    for(let i=0;i<worm.body.length;i+=5){
 
-    /*
-       Convertir segmentos
-       en comida.
-    */
+        const p=worm.body[i];
 
-    if(worm.body){
-
-        for(
-            let i=0;
-            i<worm.body.length;
-            i+=5
-        ){
-
-            const p =
-                worm.body[i];
-
-
-            foods.push(
-                createFood(
-                    p.x,
-                    p.y
-                )
-            );
-
-        }
-
+        foods.push(
+            createFood(p.x,p.y)
+        );
     }
-
 }
 
 
-/* =========================================================
-   COLISIONES
-========================================================= */
-
 function checkCollisions(){
 
-    const worms = [
-
+    const worms=[
         player,
-
         ...bots,
-
-        ...Array.from(
-            remotePlayers.values()
-        )
-
+        ...Array.from(remotePlayers.values())
     ];
 
 
-    for(
-        const attacker of worms
-    ){
+    for(const attacker of worms){
 
-        if(!attacker.alive)
-            continue;
+        if(!attacker.alive)continue;
 
 
-        /*
-           Solo comprobamos la cabeza
-           del atacante.
-        */
+        for(const victim of worms){
 
-        for(
-            const victim of worms
-        ){
+            if(attacker===victim)continue;
+            if(!victim.alive)continue;
 
-            if(attacker === victim)
-                continue;
+            const body=victim.body||[];
 
-            if(!victim.alive)
-                continue;
+            for(let i=3;i<body.length;i+=2){
 
+                const p=body[i];
 
-            /*
-               Para evitar que la cabeza
-               choque inmediatamente contra
-               sus primeros segmentos.
-            */
+                if(distance(
+                    attacker.x,
+                    attacker.y,
+                    p.x,
+                    p.y
+                )<15){
 
-            const body =
-                victim.body || [];
+                    killWorm(attacker);
 
 
-            const start =
-                victim === attacker
-                ? 12
-                : 3;
-
-
-            for(
-                let i=start;
-                i<body.length;
-                i+=2
-            ){
-
-                const segment =
-                    body[i];
-
-
-                if(
-                    distance(
-                        attacker.x,
-                        attacker.y,
-                        segment.x,
-                        segment.y
-                    ) < 15
-                ){
-
-                    /*
-                       EL QUE TOCÓ
-                       ES EL QUE MUERE.
-                    */
-
-                    killWorm(
-                        attacker
-                    );
-
-
-                    /*
-                       Si era el jugador,
-                       game over.
-                    */
-
-                    if(
-                        attacker === player
-                    ){
+                    if(attacker===player){
 
                         gameOver=true;
 
                         document.getElementById(
                             "finalScore"
-                        ).textContent =
-                            "Puntuación: " +
+                        ).textContent=
+                            "Puntuación: "+
                             player.score;
 
                         document.getElementById(
                             "gameOver"
-                        ).style.display =
-                            "flex";
-
+                        ).style.display="flex";
                     }
 
-
                     break;
-
                 }
-
             }
-
         }
-
     }
-
 }
 
 
-/* =========================================================
-   MULTIPLAYER
-========================================================= */
+/* =====================================================
+   MULTIPLAYER JUGADORES
+===================================================== */
 
 async function connect(){
 
-    playerId =
-        crypto.randomUUID();
+    playerId=crypto.randomUUID();
 
-    player.id =
-        playerId;
+    player.id=playerId;
 
 
-    channel =
-        supabaseClient.channel(
-            "worm-arena-online",
-            {
-                config:{
-                    broadcast:{
-                        self:false
-                    }
-                }
-            }
-        );
+    channel=supabaseClient.channel(
+        "worm-arena-game"
+    );
 
-
-    /*
-       RECIBIR JUGADORES
-    */
 
     channel.on(
         "broadcast",
-        {
-            event:"player"
-        },
-        ({payload}) => {
+        {event:"player"},
+        ({payload})=>{
 
-            if(
-                payload.id === playerId
-            )
-                return;
-
-
-            /*
-               Ahora recibimos
-               TODO el cuerpo.
-            */
+            if(payload.id===playerId)return;
 
             remotePlayers.set(
                 payload.id,
                 payload
             );
 
+            updateVoicePlayer(
+                payload.id,
+                payload.name,
+                false
+            );
         }
     );
 
-
-    /*
-       RECIBIR ADMIN
-    */
 
     channel.on(
         "broadcast",
-        {
-            event:"admin"
-        },
-        ({payload}) => {
+        {event:"admin"},
+        ({payload})=>{
+            executeRemoteAdmin(payload);
+        }
+    );
 
-            executeRemoteAdmin(
-                payload
+
+    await channel.subscribe(status=>{
+
+        const el=
+            document.getElementById(
+                "connection"
             );
 
+        if(status==="SUBSCRIBED"){
+
+            el.textContent=
+                "🟢 ONLINE • SUPABASE";
+
+            el.style.color="#42ff78";
+
+        }else{
+
+            el.textContent=
+                "Estado: "+status;
         }
-    );
+    });
 
 
-    await channel.subscribe(
-        status => {
-
-            const element =
-                document.getElementById(
-                    "connection"
-                );
-
-
-            if(
-                status ===
-                "SUBSCRIBED"
-            ){
-
-                element.textContent =
-                    "🟢 ONLINE • SUPABASE REALTIME";
-
-                element.style.color =
-                    "#42ff78";
-
-            }
-            else{
-
-                element.textContent =
-                    "Estado: " +
-                    status;
-
-            }
-
-        }
-    );
-
+    await initVoice();
 }
 
 
-/* =========================================================
-   ENVIAR JUGADOR
-========================================================= */
+/* =====================================================
+   ENVIAR PLAYER
+===================================================== */
 
 async function sendPlayer(){
 
-    if(!channel)
-        return;
-
-
-    const now =
-        performance.now();
-
-
-    if(
-        now-lastSend <
-        SEND_RATE
-    )
-        return;
-
-
-    lastSend=now;
+    if(!channel)return;
 
 
     await channel.send({
@@ -1588,51 +773,492 @@ async function sendPlayer(){
         payload:{
 
             id:player.id,
-
             name:player.name,
-
             color:player.color,
 
             x:player.x,
-
             y:player.y,
 
             angle:player.angle,
-
             score:player.score,
-
             alive:player.alive,
 
-            /*
-               ESTO ARREGLA EL PROBLEMA
-               DE LOS JUGADORES INVISIBLES.
-            */
-
-            body:player.body.map(
-                p => ({
-                    x:p.x,
-                    y:p.y
-                })
-            )
-
+            body:player.body
         }
-
     });
-
 }
 
 
-/* =========================================================
-   ADMIN ONLINE
-========================================================= */
+/* =====================================================
+   VOZ WEBRTC
+===================================================== */
+
+async function initVoice(){
+
+    voiceChannel=
+        supabaseClient.channel(
+            "worm-arena-voice"
+        );
+
+
+    voiceChannel.on(
+        "broadcast",
+        {event:"voice-offer"},
+        async({payload})=>{
+
+            if(payload.from===player.id)return;
+
+            if(
+                payload.to &&
+                payload.to!==player.id
+            )return;
+
+            await receiveOffer(payload);
+        }
+    );
+
+
+    voiceChannel.on(
+        "broadcast",
+        {event:"voice-answer"},
+        async({payload})=>{
+
+            if(payload.from===player.id)return;
+
+            if(
+                payload.to &&
+                payload.to!==player.id
+            )return;
+
+            const peer=peers.get(
+                payload.from
+            );
+
+            if(!peer)return;
+
+            await peer.setRemoteDescription(
+                new RTCSessionDescription(
+                    payload.answer
+                )
+            );
+        }
+    );
+
+
+    voiceChannel.on(
+        "broadcast",
+        {event:"voice-ice"},
+        async({payload})=>{
+
+            if(payload.from===player.id)return;
+
+            if(
+                payload.to &&
+                payload.to!==player.id
+            )return;
+
+            const peer=peers.get(
+                payload.from
+            );
+
+            if(!peer)return;
+
+            try{
+
+                await peer.addIceCandidate(
+                    new RTCIceCandidate(
+                        payload.candidate
+                    )
+                );
+
+            }catch(e){
+                console.log(e);
+            }
+        }
+    );
+
+
+    voiceChannel.on(
+        "broadcast",
+        {event:"voice-state"},
+        ({payload})=>{
+
+            if(payload.id===player.id)return;
+
+            updateVoicePlayer(
+                payload.id,
+                payload.name,
+                payload.enabled
+            );
+        }
+    );
+
+
+    await voiceChannel.subscribe();
+}
+
+
+/* =====================================================
+   WEBRTC PEER
+===================================================== */
+
+function createPeer(otherId){
+
+    if(peers.has(otherId)){
+        return peers.get(otherId);
+    }
+
+
+    const peer=
+        new RTCPeerConnection({
+
+            iceServers:[
+                {
+                    urls:
+                    "stun:stun.l.google.com:19302"
+                }
+            ]
+        });
+
+
+    if(localStream){
+
+        localStream
+            .getTracks()
+            .forEach(track=>{
+                peer.addTrack(
+                    track,
+                    localStream
+                );
+            });
+    }
+
+
+    peer.ontrack=e=>{
+
+        let audio=
+            remoteAudio.get(otherId);
+
+
+        if(!audio){
+
+            audio=
+                document.createElement(
+                    "audio"
+                );
+
+            audio.autoplay=true;
+
+            audio.style.display="none";
+
+            document.body.appendChild(
+                audio
+            );
+
+            remoteAudio.set(
+                otherId,
+                audio
+            );
+        }
+
+
+        audio.srcObject=
+            e.streams[0];
+    };
+
+
+    peer.onicecandidate=async e=>{
+
+        if(!e.candidate)return;
+
+        await voiceChannel.send({
+
+            type:"broadcast",
+
+            event:"voice-ice",
+
+            payload:{
+
+                from:player.id,
+                to:otherId,
+
+                candidate:e.candidate
+            }
+        });
+    };
+
+
+    peers.set(
+        otherId,
+        peer
+    );
+
+
+    return peer;
+}
+
+
+/* =====================================================
+   LLAMAR
+===================================================== */
+
+async function callPlayer(otherId){
+
+    const peer=
+        createPeer(otherId);
+
+
+    const offer=
+        await peer.createOffer();
+
+
+    await peer.setLocalDescription(
+        offer
+    );
+
+
+    await voiceChannel.send({
+
+        type:"broadcast",
+
+        event:"voice-offer",
+
+        payload:{
+
+            from:player.id,
+            to:otherId,
+
+            offer
+        }
+    });
+}
+
+
+/* =====================================================
+   RECIBIR
+===================================================== */
+
+async function receiveOffer(payload){
+
+    const peer=
+        createPeer(
+            payload.from
+        );
+
+
+    await peer.setRemoteDescription(
+        new RTCSessionDescription(
+            payload.offer
+        )
+    );
+
+
+    const answer=
+        await peer.createAnswer();
+
+
+    await peer.setLocalDescription(
+        answer
+    );
+
+
+    await voiceChannel.send({
+
+        type:"broadcast",
+
+        event:"voice-answer",
+
+        payload:{
+
+            from:player.id,
+            to:payload.from,
+
+            answer
+        }
+    });
+}
+
+
+/* =====================================================
+   MIC
+===================================================== */
+
+async function toggleMicrophone(){
+
+    if(!microphoneEnabled){
+
+        try{
+
+            localStream=
+                await navigator.mediaDevices
+                .getUserMedia({
+                    audio:true,
+                    video:false
+                });
+
+
+            microphoneEnabled=true;
+
+
+            document.getElementById(
+                "voiceBtn"
+            ).textContent=
+                "🔴 Silenciar micrófono";
+
+
+            document.getElementById(
+                "voiceStatus"
+            ).textContent=
+                "🟢 Micrófono activo";
+
+
+            await voiceChannel.send({
+
+                type:"broadcast",
+
+                event:"voice-state",
+
+                payload:{
+
+                    id:player.id,
+                    name:player.name,
+                    enabled:true
+                }
+            });
+
+
+            for(
+                const remote
+                of remotePlayers.values()
+            ){
+
+                callPlayer(
+                    remote.id
+                );
+            }
+
+
+        }catch(error){
+
+            console.error(error);
+
+            document.getElementById(
+                "voiceStatus"
+            ).textContent=
+                "❌ Permiso de micrófono rechazado";
+        }
+
+    }else{
+
+        microphoneEnabled=false;
+
+
+        if(localStream){
+
+            localStream
+                .getTracks()
+                .forEach(
+                    track=>track.stop()
+                );
+        }
+
+
+        localStream=null;
+
+
+        document.getElementById(
+            "voiceBtn"
+        ).textContent=
+            "🎤 Activar micrófono";
+
+
+        document.getElementById(
+            "voiceStatus"
+        ).textContent=
+            "Micrófono apagado";
+
+
+        await voiceChannel.send({
+
+            type:"broadcast",
+
+            event:"voice-state",
+
+            payload:{
+
+                id:player.id,
+                name:player.name,
+                enabled:false
+            }
+        });
+    }
+}
+
+
+/* =====================================================
+   VOICE UI
+===================================================== */
+
+function updateVoicePlayer(
+    id,
+    name,
+    enabled
+){
+
+    let element=
+        document.getElementById(
+            "voice-"+id
+        );
+
+
+    if(!element){
+
+        element=
+            document.createElement(
+                "div"
+            );
+
+        element.id=
+            "voice-"+id;
+
+        element.className=
+            "voicePlayer";
+
+        document.getElementById(
+            "voicePlayers"
+        ).appendChild(
+            element
+        );
+    }
+
+
+    element.textContent=
+        (enabled?"🟢 ":"⚪ ")+name;
+}
+
+
+document.getElementById(
+    "voiceBtn"
+).onclick=
+    toggleMicrophone;
+
+
+/* =====================================================
+   ADMIN
+===================================================== */
 
 async function sendAdmin(
     action,
     data={}
 ){
 
-    if(!channel)
-        return;
+    if(!channel)return;
+
+
+    const payload={
+        action,
+        data
+    };
 
 
     await channel.send({
@@ -1641,511 +1267,256 @@ async function sendAdmin(
 
         event:"admin",
 
-        payload:{
-
-            action,
-
-            data
-
-        }
-
+        payload
     });
 
 
-    /*
-       El administrador también ejecuta
-       el comando inmediatamente.
-    */
-
-    executeRemoteAdmin({
-
-        action,
-
-        data
-
-    });
-
+    executeRemoteAdmin(payload);
 }
 
 
-/* =========================================================
-   EJECUTAR ADMIN
-========================================================= */
+function executeRemoteAdmin(command){
 
-function executeRemoteAdmin(
-    command
-){
-
-    const action =
-        command.action;
+    const action=command.action;
 
 
-    /* +10 BOTS */
+    if(action==="addBots"){
 
-    if(
-        action ===
-        "addBots"
-    ){
+        const amount=
+            command.data?.amount||10;
 
-        const amount =
-            command.data?.amount ||
-            10;
-
-
-        for(
-            let i=0;
-            i<amount;
-            i++
-        ){
-
-            bots.push(
-                createBot()
-            );
-
+        for(let i=0;i<amount;i++){
+            bots.push(createBot());
         }
-
     }
 
 
-    /* -10 BOTS */
+    if(action==="removeBots"){
 
-    if(
-        action ===
-        "removeBots"
-    ){
-
-        const amount =
-            command.data?.amount ||
-            10;
-
+        const amount=
+            command.data?.amount||10;
 
         for(
             let i=0;
-            i<amount &&
-            bots.length;
+            i<amount&&bots.length;
             i++
         ){
-
             bots.pop();
-
         }
-
     }
 
 
-    /* +100 FOOD */
+    if(action==="addFood"){
 
-    if(
-        action ===
-        "addFood"
-    ){
+        const amount=
+            command.data?.amount||100;
 
-        const amount =
-            command.data?.amount ||
-            100;
-
-
-        for(
-            let i=0;
-            i<amount;
-            i++
-        ){
-
-            foods.push(
-                createFood()
-            );
-
+        for(let i=0;i<amount;i++){
+            foods.push(createFood());
         }
-
     }
 
 
-    /* CLEAR FOOD */
-
-    if(
-        action ===
-        "clearFood"
-    ){
-
+    if(action==="clearFood"){
         foods.length=0;
-
     }
 
 
-    /* GROW */
+    if(action==="grow"){
 
-    if(
-        action ===
-        "grow"
-    ){
+        player.score+=
+            command.data?.amount||100;
 
-        player.score +=
-            command.data?.amount ||
-            100;
-
-        createBody(
-            player
-        );
-
+        createBody(player);
     }
 
 
-    /* KILL BOT */
+    if(action==="killBot"){
 
-    if(
-        action ===
-        "killBot"
-    ){
-
-        const bot =
+        const bot=
             bots.find(
-                b => b.alive
+                b=>b.alive
             );
 
-
-        if(bot)
-            killWorm(bot);
-
+        if(bot)killWorm(bot);
     }
 
 
-    /* REVIVE */
+    if(action==="revive"){
 
-    if(
-        action ===
-        "revive"
-    ){
-
-        for(
-            const bot of bots
-        ){
+        for(const bot of bots){
 
             if(!bot.alive){
 
                 bot.alive=true;
 
-                bot.score =
+                bot.score=
                     Math.max(
                         bot.score,
                         20
                     );
 
-                bot.x =
-                    random(
-                        100,
-                        WORLD-100
-                    );
+                bot.x=
+                    random(100,WORLD-100);
 
-                bot.y =
-                    random(
-                        100,
-                        WORLD-100
-                    );
+                bot.y=
+                    random(100,WORLD-100);
 
-                createBody(
-                    bot
-                );
-
+                createBody(bot);
             }
-
         }
-
     }
 
 
-    /* RESET */
-
-    if(
-        action ===
-        "reset"
-    ){
-
-        resetWorld();
-
-    }
-
-
-    /* PAUSE */
-
-    if(
-        action ===
-        "pause"
-    ){
-
+    if(action==="pause"){
         paused=true;
-
         updatePause();
-
     }
 
 
-    /* RESUME */
-
-    if(
-        action ===
-        "resume"
-    ){
-
+    if(action==="resume"){
         paused=false;
-
         updatePause();
+    }
 
+
+    if(action==="reset"){
+        resetWorld();
     }
 
 
     document.getElementById(
         "adminStatus"
-    ).textContent =
-        "Comando online: " +
-        action;
-
+    ).textContent=
+        "Comando online: "+action;
 }
 
-
-/* =========================================================
-   BOTONES ADMIN
-========================================================= */
 
 function adminAddBots(){
-
-    sendAdmin(
-        "addBots",
-        {
-            amount:10
-        }
-    );
-
+    sendAdmin("addBots",{amount:10});
 }
-
 
 function adminRemoveBots(){
-
-    sendAdmin(
-        "removeBots",
-        {
-            amount:10
-        }
-    );
-
+    sendAdmin("removeBots",{amount:10});
 }
-
 
 function adminAddFood(){
-
-    sendAdmin(
-        "addFood",
-        {
-            amount:100
-        }
-    );
-
+    sendAdmin("addFood",{amount:100});
 }
-
 
 function adminClearFood(){
-
-    sendAdmin(
-        "clearFood"
-    );
-
+    sendAdmin("clearFood");
 }
-
 
 function adminGrow(){
-
-    sendAdmin(
-        "grow",
-        {
-            amount:100
-        }
-    );
-
+    sendAdmin("grow",{amount:100});
 }
-
 
 function adminKillBot(){
-
-    sendAdmin(
-        "killBot"
-    );
-
+    sendAdmin("killBot");
 }
-
 
 function adminRevive(){
-
-    sendAdmin(
-        "revive"
-    );
-
+    sendAdmin("revive");
 }
-
 
 function adminReset(){
-
-    sendAdmin(
-        "reset"
-    );
-
+    sendAdmin("reset");
 }
-
 
 function adminPause(){
-
-    sendAdmin(
-        "pause"
-    );
-
+    sendAdmin("pause");
 }
-
 
 function adminResume(){
-
-    sendAdmin(
-        "resume"
-    );
-
+    sendAdmin("resume");
 }
 
 
-/* =========================================================
+/* =====================================================
    RESET
-========================================================= */
+===================================================== */
 
 function resetWorld(){
 
-    player.x =
-        WORLD/2;
-
-    player.y =
-        WORLD/2;
-
+    player.x=WORLD/2;
+    player.y=WORLD/2;
     player.angle=0;
-
     player.score=20;
-
     player.alive=true;
 
-    createBody(
-        player
-    );
-
+    createBody(player);
 
     bots.length=0;
-
-    spawnBots();
-
-
     foods.length=0;
 
+    spawnBots();
     generateFood();
-
 
     gameOver=false;
 
-
     document.getElementById(
         "gameOver"
-    ).style.display =
-        "none";
-
+    ).style.display="none";
 }
 
 
-/* =========================================================
-   PAUSA
-========================================================= */
-
-function updatePause(){
-
-    document.getElementById(
-        "pause"
-    ).style.display =
-        paused
-        ? "flex"
-        : "none";
-
-}
-
-
-/* =========================================================
-   CÁMARA
-========================================================= */
+/* =====================================================
+   CAMERA
+===================================================== */
 
 function getCamera(){
 
-    let x =
-        player.x -
-        canvas.width/2;
+    let x=
+        player.x-canvas.width/2;
 
+    let y=
+        player.y-canvas.height/2;
 
-    let y =
-        player.y -
-        canvas.height/2;
+    x=Math.max(
+        0,
+        Math.min(
+            WORLD-canvas.width,
+            x
+        )
+    );
 
+    y=Math.max(
+        0,
+        Math.min(
+            WORLD-canvas.height,
+            y
+        )
+    );
 
-    x =
-        Math.max(
-            0,
-            Math.min(
-                WORLD-canvas.width,
-                x
-            )
-        );
-
-
-    y =
-        Math.max(
-            0,
-            Math.min(
-                WORLD-canvas.height,
-                y
-            )
-        );
-
-
-    return {
-        x,
-        y
-    };
-
+    return {x,y};
 }
 
 
-/* =========================================================
-   GRID
-========================================================= */
+/* =====================================================
+   DRAW
+===================================================== */
 
 function drawGrid(cam){
 
-    ctx.fillStyle =
-        "#070a12";
+    ctx.fillStyle="#070a12";
 
     ctx.fillRect(
-        0,
-        0,
+        0,0,
         canvas.width,
         canvas.height
     );
 
 
+    ctx.strokeStyle="#121b2b";
+
     const grid=100;
 
+    const startX=
+        Math.floor(cam.x/grid)*grid;
 
-    ctx.strokeStyle =
-        "#121b2b";
-
-
-    const startX =
-        Math.floor(
-            cam.x/grid
-        )*grid;
-
-
-    const startY =
-        Math.floor(
-            cam.y/grid
-        )*grid;
+    const startY=
+        Math.floor(cam.y/grid)*grid;
 
 
     for(
@@ -2167,7 +1538,6 @@ function drawGrid(cam){
         );
 
         ctx.stroke();
-
     }
 
 
@@ -2190,32 +1560,16 @@ function drawGrid(cam){
         );
 
         ctx.stroke();
-
     }
-
 }
 
 
-/* =========================================================
-   DIBUJAR GUSANO
-========================================================= */
+function drawWorm(worm,cam){
 
-function drawWorm(
-    worm,
-    cam
-){
+    if(!worm.alive)return;
 
-    if(!worm.alive)
-        return;
+    const body=worm.body||[];
 
-
-    const body =
-        worm.body || [];
-
-
-    /*
-       CUERPO COMPLETO
-    */
 
     for(
         let i=body.length-1;
@@ -2223,420 +1577,269 @@ function drawWorm(
         i--
     ){
 
-        const p =
-            body[i];
+        const p=body[i];
 
-
-        const x =
-            p.x-cam.x;
-
-        const y =
-            p.y-cam.y;
+        const x=p.x-cam.x;
+        const y=p.y-cam.y;
 
 
         if(
-            x < -30 ||
-            x > canvas.width+30 ||
-            y < -30 ||
-            y > canvas.height+30
-        )
-            continue;
+            x<-30||
+            x>canvas.width+30||
+            y<-30||
+            y>canvas.height+30
+        )continue;
 
 
-        ctx.fillStyle =
-            worm.color;
-
+        ctx.fillStyle=worm.color;
 
         ctx.beginPath();
 
         ctx.arc(
             x,
             y,
-            i===0
-                ? 14
-                : 10,
+            i===0?14:10,
             0,
             Math.PI*2
         );
 
         ctx.fill();
-
     }
 
 
-    /*
-       CABEZA
-    */
-
-    const hx =
-        worm.x-cam.x;
-
-    const hy =
-        worm.y-cam.y;
+    const hx=worm.x-cam.x;
+    const hy=worm.y-cam.y;
 
 
-    const px =
-        -Math.sin(
-            worm.angle
-        );
-
-    const py =
-        Math.cos(
-            worm.angle
-        );
+    const px=-Math.sin(worm.angle);
+    const py=Math.cos(worm.angle);
 
 
-    for(
-        const side of [-1,1]
-    ){
+    for(const side of[-1,1]){
 
-        const ex =
-            hx +
-            Math.cos(
-                worm.angle
-            )*7 +
+        const ex=
+            hx+
+            Math.cos(worm.angle)*7+
             px*6*side;
 
-
-        const ey =
-            hy +
-            Math.sin(
-                worm.angle
-            )*7 +
+        const ey=
+            hy+
+            Math.sin(worm.angle)*7+
             py*6*side;
 
 
-        ctx.fillStyle =
-            "white";
-
+        ctx.fillStyle="white";
 
         ctx.beginPath();
 
         ctx.arc(
-            ex,
-            ey,
-            4,
-            0,
-            Math.PI*2
+            ex,ey,4,
+            0,Math.PI*2
         );
 
         ctx.fill();
 
 
-        ctx.fillStyle =
-            "#000";
-
+        ctx.fillStyle="#000";
 
         ctx.beginPath();
 
         ctx.arc(
-            ex,
-            ey,
-            2,
-            0,
-            Math.PI*2
+            ex,ey,2,
+            0,Math.PI*2
         );
 
         ctx.fill();
-
     }
 
 
-    /*
-       NOMBRE
-    */
-
-    ctx.font =
-        "12px Arial";
-
-    ctx.textAlign =
-        "center";
-
-    ctx.fillStyle =
-        "rgba(255,255,255,.75)";
-
+    ctx.font="12px Arial";
+    ctx.textAlign="center";
+    ctx.fillStyle="rgba(255,255,255,.8)";
 
     ctx.fillText(
         worm.name,
         hx,
         hy-24
     );
-
 }
 
 
-/* =========================================================
-   DRAW
-========================================================= */
-
 function draw(){
 
-    const cam =
-        getCamera();
-
+    const cam=getCamera();
 
     drawGrid(cam);
 
 
-    /*
-       FOOD
-    */
+    for(const food of foods){
 
-    for(
-        const food of foods
-    ){
-
-        const x =
-            food.x-cam.x;
-
-        const y =
-            food.y-cam.y;
-
+        const x=food.x-cam.x;
+        const y=food.y-cam.y;
 
         if(
-            x < -20 ||
-            x > canvas.width+20 ||
-            y < -20 ||
-            y > canvas.height+20
-        )
-            continue;
+            x<-20||
+            x>canvas.width+20||
+            y<-20||
+            y>canvas.height+20
+        )continue;
 
 
-        ctx.fillStyle =
-            food.color;
-
+        ctx.fillStyle=food.color;
 
         ctx.beginPath();
 
         ctx.arc(
-            x,
-            y,
-            food.value >= 7
-                ? 8
-                : food.value >= 3
-                ? 7
-                : 5,
+            x,y,
+            food.value>=7?8:
+            food.value>=3?7:5,
             0,
             Math.PI*2
         );
 
         ctx.fill();
-
     }
 
 
-    /*
-       BOTS
-    */
-
-    for(
-        const bot of bots
-    ){
-
-        drawWorm(
-            bot,
-            cam
-        );
-
+    for(const bot of bots){
+        drawWorm(bot,cam);
     }
 
 
-    /*
-       JUGADORES ONLINE
-    */
-
-    for(
-        const remote
-        of remotePlayers.values()
-    ){
-
-        drawWorm(
-            remote,
-            cam
-        );
-
+    for(const remote of remotePlayers.values()){
+        drawWorm(remote,cam);
     }
 
 
-    /*
-       PLAYER
-    */
-
-    drawWorm(
-        player,
-        cam
-    );
-
+    drawWorm(player,cam);
 }
 
 
-/* =========================================================
+/* =====================================================
    HUD
-========================================================= */
+===================================================== */
 
 function updateHUD(){
 
-    document.getElementById(
-        "score"
-    ).textContent =
-        player.score;
+    document.getElementById("score")
+        .textContent=player.score;
+
+    document.getElementById("length")
+        .textContent=player.body.length;
+
+    document.getElementById("players")
+        .textContent=remotePlayers.size+1;
+
+    document.getElementById("adminBots")
+        .textContent=bots.length;
+
+    document.getElementById("adminFood")
+        .textContent=foods.length;
+
+    document.getElementById("adminPlayers")
+        .textContent=remotePlayers.size+1;
 
 
-    document.getElementById(
-        "length"
-    ).textContent =
-        player.body.length;
-
-
-    document.getElementById(
-        "players"
-    ).textContent =
-        remotePlayers.size+1;
-
-
-    document.getElementById(
-        "adminBots"
-    ).textContent =
-        bots.length;
-
-
-    document.getElementById(
-        "adminFood"
-    ).textContent =
-        foods.length;
-
-
-    document.getElementById(
-        "adminPlayers"
-    ).textContent =
-        remotePlayers.size+1;
-
-
-    const ranking = [
-
+    const ranking=[
         player,
-
         ...bots,
-
-        ...Array.from(
-            remotePlayers.values()
-        )
-
+        ...Array.from(remotePlayers.values())
     ]
-    .filter(
-        w => w.alive
-    )
-    .sort(
-        (a,b) =>
-            b.score-a.score
-    );
+    .filter(w=>w.alive)
+    .sort((a,b)=>b.score-a.score);
 
 
-    const list =
+    const list=
         document.getElementById(
             "rankingList"
         );
 
-
     list.innerHTML="";
 
 
-    ranking
-        .slice(0,8)
-        .forEach(
-            (worm,i) => {
+    ranking.slice(0,8).forEach(
+        (worm,i)=>{
 
-                const row =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                row.className="rank";
-
-
-                row.innerHTML =
-                    `
-                    <span>
-                        ${i+1}. ${worm.name}
-                    </span>
-
-                    <b>
-                        ${worm.score}
-                    </b>
-                    `;
-
-
-                list.appendChild(
-                    row
+            const row=
+                document.createElement(
+                    "div"
                 );
 
-            }
-        );
+            row.className="rank";
 
+            row.innerHTML=
+                `<span>${i+1}. ${worm.name}</span>
+                 <b>${worm.score}</b>`;
+
+            list.appendChild(row);
+        }
+    );
 }
 
 
-/* =========================================================
+/* =====================================================
+   PAUSA
+===================================================== */
+
+function updatePause(){
+
+    document.getElementById(
+        "pause"
+    ).style.display=
+        paused?"flex":"none";
+}
+
+
+/* =====================================================
    START
-========================================================= */
+===================================================== */
 
 document.getElementById(
     "play"
-).onclick = async () => {
+).onclick=async()=>{
 
-    const name =
+    const name=
         document.getElementById(
             "name"
         ).value.trim();
 
 
-    player.name =
-        name ||
-        "Player";
+    player.name=
+        name||"Player";
 
 
     document.getElementById(
         "menu"
-    ).style.display =
-        "none";
+    ).style.display="none";
 
 
-    createBody(
-        player
-    );
-
+    createBody(player);
 
     generateFood();
 
     spawnBots();
 
-
     await connect();
 
-
     running=true;
-
 };
 
 
-/* =========================================================
+/* =====================================================
    LOOP
-========================================================= */
+===================================================== */
+
+let lastNetwork=0;
 
 function loop(){
 
-    requestAnimationFrame(
-        loop
-    );
+    requestAnimationFrame(loop);
 
 
     if(!running){
 
         draw();
-
         return;
-
     }
 
 
@@ -2649,37 +1852,29 @@ function loop(){
         updatePlayer();
 
 
-        for(
-            const bot of bots
-        ){
-
-            updateBot(
-                bot
-            );
-
+        for(const bot of bots){
+            updateBot(bot);
         }
 
 
-        /*
-           Primero movimiento.
-           Después colisiones.
-        */
-
         checkCollisions();
-
 
         generateFood();
 
 
-        sendPlayer();
+        const now=performance.now();
 
+        if(now-lastNetwork>60){
+
+            lastNetwork=now;
+
+            sendPlayer();
+        }
     }
 
 
     draw();
-
     updateHUD();
-
 }
 
 
@@ -2689,3 +1884,4 @@ loop();
 
 </body>
 </html>
+```
